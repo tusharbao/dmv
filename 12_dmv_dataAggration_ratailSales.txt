@@ -1,0 +1,96 @@
+
+# 1. Import required libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 2. Load and explore the dataset
+df = pd.read_csv("Superstore.csv")
+
+print("First 5 Records:")
+print(df.head())
+
+print("\nDataset Shape:")
+print(df.shape)
+
+print("\nColumn Names:")
+print(df.columns.tolist())
+
+print("\nDataset Information:")
+df.info()
+
+# 3. Identify relevant variables
+print("\nRelevant Variables:")
+print(df[["Region", "Sales", "Category"]].head())
+
+# 4. Group sales by Region and calculate total sales
+region_sales = df.groupby("Region")["Sales"].sum()
+
+print("\nTotal Sales by Region:")
+print(region_sales)
+
+# 5. Visualize sales distribution using Bar Chart
+plt.figure(figsize=(8, 5))
+region_sales.plot(kind="bar", color="skyblue")
+
+plt.title("Total Sales by Region")
+plt.xlabel("Region")
+plt.ylabel("Total Sales Amount")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+# Pie Chart
+plt.figure(figsize=(7, 7))
+region_sales.plot(kind="pie", autopct="%1.1f%%")
+
+plt.title("Sales Distribution by Region")
+plt.ylabel("")
+plt.show()
+
+# 6. Identify top-performing region
+top_region = region_sales.idxmax()
+highest_sales = region_sales.max()
+
+print("\nTop Performing Region:", top_region)
+print("Highest Sales Amount:", round(highest_sales, 2))
+
+print("\nRegions Ranked by Sales:")
+print(region_sales.sort_values(ascending=False))
+
+# 7. Group sales by Region and Product Category
+region_category_sales = df.groupby(
+    ["Region", "Category"]
+)["Sales"].sum().unstack()
+
+print("\nSales by Region and Product Category:")
+print(region_category_sales)
+
+# 8. Create Grouped Bar Chart
+region_category_sales.plot(
+    kind="bar",
+    figsize=(10, 6)
+)
+
+plt.title("Region-wise Sales by Product Category")
+plt.xlabel("Region")
+plt.ylabel("Total Sales Amount")
+plt.xticks(rotation=0)
+plt.legend(title="Product Category")
+plt.tight_layout()
+plt.show()
+
+# Create Stacked Bar Chart
+region_category_sales.plot(
+    kind="bar",
+    stacked=True,
+    figsize=(10, 6)
+)
+
+plt.title("Stacked Sales by Region and Product Category")
+plt.xlabel("Region")
+plt.ylabel("Total Sales Amount")
+plt.xticks(rotation=0)
+plt.legend(title="Product Category")
+plt.tight_layout()
+plt.show()

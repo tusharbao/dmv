@@ -1,0 +1,193 @@
+pip install pandas numpy matplotlib seaborn requests
+# 1. Import libraries
+import requests
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 2. API Configuration
+API_KEY = "b29077c984ad6b45d13deedb511cf106"
+CITY = "Pune"
+
+url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={API_KEY}&units=metric"
+
+# 3. Fetch weather data
+response = requests.get(url)
+data = response.json()
+
+if response.status_code == 200:
+
+    records = []
+
+    # 4. Extract weather attributes
+    for item in data["list"]:
+        records.append({
+            "Date": item["dt_txt"],
+            "Temperature": item["main"]["temp"],
+            "Humidity": item["main"]["humidity"],
+            "Pressure": item["main"]["pressure"],
+            "Wind Speed": item["wind"]["speed"],
+            "Rain": item.get("rain", {}).get("3h", 0),
+            "Latitude": data["city"]["coord"]["lat"],
+            "Longitude": data["city"]["coord"]["lon"]
+        })
+
+    weather_df = pd.DataFrame(records)
+
+    # 5. Explore dataset
+    print("Weather Data")
+    print(weather_df.head())
+
+    print("\nData Information")
+    weather_df.info()
+
+    print("\nMissing Values")
+    print(weather_df.isnull().sum())
+
+    # 6. Data cleaning
+    weather_df["Date"] = pd.to_datetime(weather_df["Date"])
+
+    weather_df.drop_duplicates(inplace=True)
+
+    weather_df.fillna(0, inplace=True)
+
+    print("\nCleaned Data")
+    print(weather_df.head())
+
+    # 7. Statistical analysis
+    print("\nWeather Statistics")
+
+    print("Average Temperature:",
+          weather_df["Temperature"].mean())
+
+    print("Maximum Temperature:",
+          weather_df["Temperature"].max())
+
+    print("Minimum Temperature:",
+          weather_df["Temperature"].min())
+
+    print("Average Humidity:",
+          weather_df["Humidity"].mean())
+
+    print("Average Wind Speed:",
+          weather_df["Wind Speed"].mean())
+
+    print("Total Rainfall:",
+          weather_df["Rain"].sum())
+
+    # 8. Daily aggregation
+    daily_data = weather_df.set_index("Date").resample("D").agg({
+        "Temperature": "mean",
+        "Humidity": "mean",
+        "Wind Speed": "mean",
+        "Rain": "sum"
+    })
+
+    print("\nDaily Weather Summary")
+    print(daily_data)
+
+    # 9. Monthly aggregation
+    monthly_data = weather_df.set_index("Date").resample("ME").agg({
+        "Temperature": "mean",
+        "Humidity": "mean",
+        "Wind Speed": "mean",
+        "Rain": "sum"
+    })
+
+    print("\nMonthly Weather Summary")
+    print(monthly_data)
+
+    # 10. Temperature visualization
+    plt.figure(figsize=(10, 5))
+    plt.plot(weather_df["Date"],
+             weather_df["Temperature"], marker="o")
+
+    plt.title("Temperature Variation")
+    plt.xlabel("Date")
+    plt.ylabel("Temperature (°C)")
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+    # 11. Daily rainfall visualization
+    plt.figure(figsize=(8, 5))
+    plt.bar(daily_data.index, daily_data["Rain"])
+
+    plt.title("Daily Rainfall")
+    plt.xlabel("Date")
+    plt.ylabel("Rainfall (mm)")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+    # 12. Wind speed visualization
+    plt.figure(figsize=(10, 5))
+    plt.plot(weather_df["Date"],
+             weather_df["Wind Speed"], marker="o")
+
+    plt.title("Wind Speed Variation")
+    plt.xlabel("Date")
+    plt.ylabel("Wind Speed (m/s)")
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+    # 13. Temperature vs Humidity
+    plt.figure(figsize=(8, 5))
+    plt.scatter(weather_df["Temperature"],
+                weather_df["Humidity"])
+
+    plt.title("Temperature vs Humidity")
+    plt.xlabel("Temperature (°C)")
+    plt.ylabel("Humidity (%)")
+    plt.show()
+
+    # 14. Correlation heatmap
+    plt.figure(figsize=(8, 5))
+    sns.heatmap(
+        weather_df[
+            ["Temperature", "Humidity", "Pressure",
+             "Wind Speed", "Rain"]
+        ].corr(),
+        annot=True,
+        cmap="coolwarm"
+    )
+
+    plt.title("Weather Correlation Heatmap")
+    plt.tight_layout()
+    plt.show()
+
+    # 15. Geographical information
+    latitude = data["city"]["coord"]["lat"]
+    longitude = data["city"]["coord"]["lon"]
+
+    print("\nGeographical Information")
+    print("City:", CITY)
+    print("Latitude:", latitude)
+    print("Longitude:", longitude)
+
+    # 16. Geographical visualization
+    plt.figure(figsize=(7, 5))
+    plt.scatter(
+        longitude,
+        latitude,
+        s=200,
+        color="red"
+    )
+
+    plt.title("Geographical Location of Pune")
+    plt.xlabel("Longitude")
+    plt.ylabel("Latitude")
+    plt.grid(True)
+    plt.show()
+
+    # 17. Save data
+    weather_df.to_csv("weather_data.csv", index=False)
+
+    print("\nWeather Data Saved Successfully!")
+    print("Weather Analysis Completed!")
+
+else:
+    print("Error:", data)

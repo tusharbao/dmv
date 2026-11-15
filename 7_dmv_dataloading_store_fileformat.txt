@@ -1,0 +1,168 @@
+pip install pandas numpy matplotlib seaborn openpyxl
+# 1. Import Libraries
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# 2. Load Data from Different File Formats
+csv_data = pd.read_csv("sales_data.csv")
+excel_data = pd.read_excel("sales_data.xlsx")
+json_data = pd.read_json("sales_data.json")
+
+# 3. Display First 5 Records
+print("CSV Data")
+print(csv_data.head())
+
+print("\nExcel Data")
+print(excel_data.head())
+
+print("\nJSON Data")
+print(json_data.head())
+
+# 4. Display Dataset Information
+print("\nCSV Information")
+csv_data.info()
+
+print("\nExcel Information")
+excel_data.info()
+
+print("\nJSON Information")
+json_data.info()
+
+# 5. Check Missing Values
+print("\nMissing Values - CSV")
+print(csv_data.isnull().sum())
+
+print("\nMissing Values - Excel")
+print(excel_data.isnull().sum())
+
+print("\nMissing Values - JSON")
+print(json_data.isnull().sum())
+
+# 6. Remove Duplicate Records
+csv_data.drop_duplicates(inplace=True)
+excel_data.drop_duplicates(inplace=True)
+json_data.drop_duplicates(inplace=True)
+
+# 7. Handle Missing Values
+csv_data.fillna(0, inplace=True)
+excel_data.fillna(0, inplace=True)
+json_data.fillna(0, inplace=True)
+
+# 8. Merge All Datasets
+sales = pd.concat(
+    [csv_data, excel_data, json_data],
+    ignore_index=True
+)
+
+print("\nMerged Dataset")
+print(sales.head())
+
+# 9. Data Transformation
+sales["Total"] = sales["Quantity"] * sales["Price"]
+
+# 10. Summary Statistics
+print("\nSummary Statistics")
+print(sales.describe())
+
+# 11. Calculate Total Sales
+total_sales = sales["Total"].sum()
+print("\nTotal Sales =", total_sales)
+
+# 12. Calculate Average Order Value
+average_order = sales["Total"].mean()
+print("Average Order Value =", average_order)
+
+# 13. Sales by Category
+category_sales = sales.groupby("Category")["Total"].sum()
+
+print("\nSales by Category")
+print(category_sales)
+
+# 14. Category Distribution
+category_distribution = sales["Category"].value_counts()
+
+print("\nCategory Distribution")
+print(category_distribution)
+
+# 15. Data Visualization
+
+# A. Bar Chart - Sales by Category
+plt.figure(figsize=(8, 5))
+category_sales.plot(kind="bar")
+
+plt.title("Sales by Category")
+plt.xlabel("Category")
+plt.ylabel("Total Sales")
+plt.xticks(rotation=0)
+plt.tight_layout()
+plt.show()
+
+# B. Pie Chart - Category Distribution
+plt.figure(figsize=(6, 6))
+category_distribution.plot(
+    kind="pie",
+    autopct="%1.1f%%"
+)
+
+plt.title("Category Distribution")
+plt.ylabel("")
+plt.show()
+
+# C. Box Plot - Sales Distribution
+plt.figure(figsize=(6, 4))
+sales.boxplot(column="Total")
+
+plt.title("Sales Box Plot")
+plt.ylabel("Total Sales")
+plt.show()
+
+# 16. Final Result
+print("\nPractical Executed Successfully!")
+
+dataset 
+1.file json
+[
+    {
+        "OrderID": 101,
+        "Product": "Laptop",
+        "Category": "Electronics",
+        "Quantity": 2,
+        "Price": 50000
+    },
+    {
+        "OrderID": 102,
+        "Product": "Mobile",
+        "Category": "Electronics",
+        "Quantity": 3,
+        "Price": 15000
+    },
+    {
+        "OrderID": 103,
+        "Product": "Shirt",
+        "Category": "Clothing",
+        "Quantity": 4,
+        "Price": 800
+    },
+    {
+        "OrderID": 104,
+        "Product": "Shoes",
+        "Category": "Fashion",
+        "Quantity": 2,
+        "Price": 2000
+    },
+    {
+        "OrderID": 105,
+        "Product": "Tablet",
+        "Category": "Electronics",
+        "Quantity": 1,
+        "Price": 20000
+    }
+]
+
+2.csv&xles
+OrderID,Product,Category,Quantity,Price
+101,Laptop,Electronics,2,50000
+102,Mobile,Electronics,3,15000
+103,Shirt,Clothing,4,800
+104,Shoes,Fashion,2,2000
+105,Tablet,Electronics,1,20000
