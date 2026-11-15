@@ -1,0 +1,450 @@
+#7_dmv_dataloading_store_fileformat.
+
+
+# Pandas library import karto, ji data reading, cleaning ani analysis sathi use hote
+import pandas as pd
+
+# Matplotlib cha pyplot module import karto, jo graphs ani charts create karto
+import matplotlib.pyplot as plt
+
+
+# CSV file madhun data read karun csv_data variable madhe store karto
+csv_data = pd.read_csv("sales_data.csv")
+
+# Excel file madhun data read karun excel_data variable madhe store karto
+excel_data = pd.read_excel("sales_data.xlsx")
+
+# JSON file madhun data read karun json_data variable madhe store karto
+json_data = pd.read_json("sales_data.json")
+
+
+# CSV Data heading print karto
+print("CSV Data")
+
+# CSV madhil first 5 rows display karto
+print(csv_data.head())
+
+
+# Excel Data heading print karto
+print("\nExcel Data")
+
+# Excel madhil first 5 rows display karto
+print(excel_data.head())
+
+
+# JSON Data heading print karto
+print("\nJSON Data")
+
+# JSON madhil first 5 rows display karto
+print(json_data.head())
+
+
+# CSV dataset chi information display karto
+print("\nCSV Information")
+
+# CSV madhil columns, data types ani non-null values dakhavto
+csv_data.info()
+
+
+# Excel dataset chi information display karto
+print("\nExcel Information")
+
+# Excel madhil columns, data types ani non-null values dakhavto
+excel_data.info()
+
+
+# JSON dataset chi information display karto
+print("\nJSON Information")
+
+# JSON madhil columns, data types ani non-null values dakhavto
+json_data.info()
+
+
+# CSV madhil missing values check karto
+print("\nMissing Values - CSV")
+
+# Pratyek column madhye kiti missing values aahet te count karto
+print(csv_data.isnull().sum())
+
+
+# Excel madhil missing values check karto
+print("\nMissing Values - Excel")
+
+# Excel chya pratyek column madhil missing values count karto
+print(excel_data.isnull().sum())
+
+
+# JSON madhil missing values check karto
+print("\nMissing Values - JSON")
+
+# JSON chya pratyek column madhil missing values count karto
+print(json_data.isnull().sum())
+
+
+# CSV madhil duplicate rows remove karto
+# inplace=True mule original dataset madhech changes hotat
+csv_data.drop_duplicates(inplace=True)
+
+# Excel madhil duplicate rows remove karto
+excel_data.drop_duplicates(inplace=True)
+
+# JSON madhil duplicate rows remove karto
+json_data.drop_duplicates(inplace=True)
+
+
+# CSV madhil missing values 0 ne replace karto
+csv_data.fillna(0, inplace=True)
+
+# Excel madhil missing values 0 ne replace karto
+excel_data.fillna(0, inplace=True)
+
+# JSON madhil missing values 0 ne replace karto
+json_data.fillna(0, inplace=True)
+
+
+# Tinhihi datasets ekatra merge karto
+sales = pd.concat(
+    [csv_data, excel_data, json_data],
+
+    # ignore_index=True mule new continuous index create hoto
+    ignore_index=True
+)
+
+
+# Merged dataset chi heading print karto
+print("\nMerged Dataset")
+
+# Merged dataset madhil first 5 rows display karto
+print(sales.head())
+
+
+# Quantity ani Price multiply karun Total column create karto
+# Pratyek product chi total sales amount calculate karto
+sales["Total"] = sales["Quantity"] * sales["Price"]
+
+
+# Summary Statistics heading print karto
+print("\nSummary Statistics")
+
+# Count, mean, standard deviation, minimum, maximum ani quartiles calculate karto
+print(sales.describe())
+
+
+# Total column madhil sarva sales add karun total sales calculate karto
+total_sales = sales["Total"].sum()
+
+# Total sales display karto
+print("\nTotal Sales =", total_sales)
+
+
+# Total sales chi average value calculate karto
+average_order = sales["Total"].mean()
+
+# Average order value display karto
+print("Average Order Value =", average_order)
+
+
+# Category nusar data group karto ani pratyek category chi total sales calculate karto
+category_sales = sales.groupby("Category")["Total"].sum()
+
+
+# Sales by Category heading print karto
+print("\nSales by Category")
+
+# Pratyek category chi total sales display karto
+print(category_sales)
+
+
+# Pratyek category madhye kiti records aahet te count karto
+category_distribution = sales["Category"].value_counts()
+
+
+# Category Distribution heading print karto
+print("\nCategory Distribution")
+
+# Category-wise records count display karto
+print(category_distribution)
+
+
+# 8 inches width ani 5 inches height cha figure create karto
+plt.figure(figsize=(8, 5))
+
+# Category-wise total sales cha bar graph create karto
+category_sales.plot(kind="bar")
+
+# Graph la title deto
+plt.title("Sales by Category")
+
+# X-axis la Category label deto
+plt.xlabel("Category")
+
+# Y-axis la Total Sales label deto
+plt.ylabel("Total Sales")
+
+# Bar graph display karto
+plt.show()
+
+
+# 6x6 size cha figure create karto
+plt.figure(figsize=(6, 6))
+
+# Category distribution cha pie chart create karto
+# autopct mule percentage values chart var display hotat
+category_distribution.plot(kind="pie", autopct="%1.1f%%")
+
+# Pie chart la title deto
+plt.title("Category Distribution")
+
+# Y-axis label remove karto karan pie chart la tyachi garaj nahi
+plt.ylabel("")
+
+# Pie chart display karto
+plt.show()
+
+
+# 6 inches width ani 4 inches height cha figure create karto
+plt.figure(figsize=(6, 4))
+
+# Total column cha box plot create karto
+sales.boxplot(column="Total")
+
+# Box plot la title deto
+plt.title("Sales Box Plot")
+
+# Y-axis la Total Sales label deto
+plt.ylabel("Total Sales")
+
+# Box plot display karto
+plt.show()
+
+
+
+
+
+
+
+
+
+'''
+Q1. What is Pandas?
+English Answer:
+Pandas is a Python library used for data manipulation, data cleaning, and data analysis.
+
+Marathi + English Mix:
+Pandas hi Python library aahe ji data manipulation, data cleaning ani data analysis sathi use hote.
+Q2. What is Matplotlib?
+English Answer:
+Matplotlib is a Python library used to create graphs and charts for data visualization.
+
+Marathi + English Mix:
+Matplotlib hi Python library aahe ji data visualization sathi graphs ani charts create karnyasathi use hote.
+Q3. What is a DataFrame?
+English Answer:
+A DataFrame is a two-dimensional data structure in Pandas. It contains rows and columns, like a table.
+
+Marathi + English Mix:
+DataFrame ha Pandas madhil two-dimensional data structure aahe. Tyat rows ani columns astat, agdi table sarkha.
+Q4. What is CSV?
+English Answer:
+CSV stands for Comma Separated Values. It is a file format used to store tabular data in text form.
+
+Marathi + English Mix:
+CSV cha full form Comma Separated Values aahe. Ha file format tabular data comma-separated form madhe store karnyasathi use hoto.
+Q5. What is an Excel file?
+English Answer:
+An Excel file is used to store and organize data in rows and columns. Its common extensions are .xls and .xlsx.
+
+Marathi + English Mix:
+Excel file data rows ani columns madhe store ani organize karnyasathi use hote. Tyache common extensions .xls ani .xlsx aahet.
+Q6. What is JSON?
+English Answer:
+JSON stands for JavaScript Object Notation. It is a lightweight format used to store and exchange data.
+
+Marathi + English Mix:
+JSON cha full form JavaScript Object Notation aahe. Ha lightweight format data store ani exchange karnyasathi use hoto.
+Q7. How do you read a CSV file in Python?
+English Answer:
+We use pd.read_csv() function to read a CSV file in Python.
+
+Marathi + English Mix:
+Python madhe CSV file read karnyasathi pd.read_csv() function use karto.
+Q8. What is the use of head() function?
+English Answer:
+The head() function displays the first five rows of a dataset by default.
+
+Marathi + English Mix:
+head() function dataset madhil default first five rows display karto. Aplyala specific rows pahije astil tar head(10) use karu shakto.
+Q9. What is the use of info() function?
+English Answer:
+The info() function displays dataset information such as column names, data types, and non-null values.
+
+Marathi + English Mix:
+info() function dataset chi information display karto, jase column names, data types ani non-null values.
+Q10. What are missing values?
+English Answer:
+Missing values are empty or unavailable values in a dataset. They are also called null values.
+
+Marathi + English Mix:
+Dataset madhye jya values available nastat kiwa empty astat tyanna missing values kiwa null values mhantat.
+Q11. What is the use of isnull() function?
+English Answer:
+The isnull() function is used to identify missing or null values in a dataset.
+
+Marathi + English Mix:
+isnull() function dataset madhil missing kiwa null values identify karnyasathi use hoto.
+Q12. What is the use of drop_duplicates()?
+English Answer:
+The drop_duplicates() function removes duplicate rows from a dataset.
+
+Marathi + English Mix:
+drop_duplicates() function dataset madhil repeated kiwa duplicate rows remove karnyasathi use hoto.
+Q13. What is the use of fillna() function?
+English Answer:
+The fillna() function is used to replace missing values with a specified value.
+
+Marathi + English Mix:
+fillna() function missing values la specified value ne replace karnyasathi use hoto. Apan ya practical madhe 0 use kela aahe.
+Q14. What is the meaning of inplace=True?
+English Answer:
+inplace=True means changes are applied directly to the original DataFrame without creating a new DataFrame.
+
+Marathi + English Mix:
+inplace=True mhanje changes directly original DataFrame madhe apply hotat. New DataFrame create karava lagat nahi.
+Q15. What is data cleaning?
+English Answer:
+Data cleaning is the process of removing duplicate records, handling missing values, and correcting incorrect data.
+
+Marathi + English Mix:
+Data cleaning mhanje dataset madhil duplicate records remove karne, missing values handle karne ani incorrect data correct karne.
+Q16. What is data preprocessing?
+English Answer:
+Data preprocessing is the process of preparing raw data for analysis by cleaning, transforming, and organizing it.
+
+Marathi + English Mix:
+Data preprocessing mhanje raw data la analysis sathi ready karne. Tyat cleaning, transforming ani organizing ya processes astat.
+Q17. What is the use of concat() function?
+English Answer:
+The concat() function is used to combine two or more DataFrames into a single DataFrame.
+
+Marathi + English Mix:
+concat() function don kiwa adhik DataFrames ekatra combine karun single DataFrame create karnyasathi use hoto.
+Q18. What is the use of ignore_index=True?
+English Answer:
+ignore_index=True creates a new continuous index after combining multiple DataFrames.
+
+Marathi + English Mix:
+ignore_index=True mule multiple DataFrames combine kelyanantar new continuous index create hoto.
+Q19. What is the use of groupby() function?
+English Answer:
+The groupby() function is used to group data based on a particular column and perform operations on each group.
+
+Marathi + English Mix:
+groupby() function particular column nusar data groups madhe divide karto ani pratyek group var operations perform karto.
+Q20. What is the use of describe() function?
+English Answer:
+The describe() function provides statistical information such as count, mean, standard deviation, minimum, maximum, and quartiles.
+
+Marathi + English Mix:
+describe() function dataset chi statistical information deto, jase count, mean, standard deviation, minimum, maximum ani quartiles.
+Q21. What is mean?
+English Answer:
+Mean is the average of all values. It is calculated by dividing the sum of all values by the total number of values.
+
+Marathi + English Mix:
+Mean mhanje average. Sarva values chi addition karun tyala total number of values ne divide karto.
+
+
+
+Original amountsEqual shares247
+
+
+
+\(\bar{x} = \frac{2 + 4 + 7}{3} = \frac{13}{3} = 4\ \frac{1}{3}\)
+x̄ is the arithmetic mean (simple average)
+
+\(x_1\)
+
+
+
+
+\(x_2\)
+
+
+
+
+\(x_3\)
+
+
+
+
+
+Remove valueAdd value
+
+
+
+
+
+Give feedback
+
+Q22. What is the use of sum() function?
+English Answer:
+The sum() function is used to calculate the total of numerical values in a column.
+
+Marathi + English Mix:
+sum() function numerical column madhil sarva values chi addition karun total calculate karto.
+Q23. What is data visualization?
+English Answer:
+Data visualization is the graphical representation of data using charts, graphs, and plots to understand information easily.
+
+Marathi + English Mix:
+Data visualization mhanje data la charts, graphs ani plots chya form madhe represent karne, jyamule information easily samajte.
+Q24. What is a Bar Chart?
+English Answer:
+A Bar Chart represents data using rectangular bars. It is mainly used to compare values between different categories.
+
+Marathi + English Mix:
+Bar Chart madhye rectangular bars use kele jatat. Different categories madhil values compare karnyasathi to use hoto.
+Q25. What is a Pie Chart?
+English Answer:
+A Pie Chart is a circular graph divided into slices. Each slice represents a percentage or proportion of the total data.
+
+Marathi + English Mix:
+Pie Chart ha circular graph asto jo different slices madhe divide kelela asto. Pratyek slice total data madhil percentage kiwa proportion show karto.
+Q26. What is a Box Plot?
+English Answer:
+A Box Plot is a graph used to show the distribution of numerical data, including median, quartiles, and possible outliers.
+
+Marathi + English Mix:
+Box Plot ha numerical data chi distribution show karto. Tyat median, quartiles ani possible outliers samajtat.
+Q27. What are outliers?
+English Answer:
+Outliers are data values that are significantly different from other values in a dataset.
+
+Marathi + English Mix:
+Outliers mhanje dataset madhil asha values jya baki values peksha khup different kiwa unusually high/low astat.
+Q28. What is the use of value_counts()?
+English Answer:
+The value_counts() function counts how many times each unique value appears in a column.
+
+Marathi + English Mix:
+value_counts() function particular column madhil pratyek unique value kiti vela repeat zali aahe te count karto.
+Q29. What is the use of figsize() function?
+English Answer:
+The figsize() function is used to set the width and height of a graph in inches.
+
+Marathi + English Mix:
+figsize() function graph chi width ani height inches madhe set karnyasathi use hoto.
+Q30. What is the difference between Bar Chart, Pie Chart, and Box Plot?
+English Answer:
+Chart	Purpose
+Bar Chart	Compares different categories.
+Pie Chart	Shows percentage distribution.
+Box Plot	Shows data distribution and outliers.
+
+Marathi + English Mix:
+- Bar Chart: Different categories compare karnyasathi use hoto.
+- Pie Chart: Data chi percentage distribution show karto.
+- Box Plot: Data distribution, median ani outliers show karto.
+
+
+'''
