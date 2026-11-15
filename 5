@@ -1,0 +1,453 @@
+#11.visualization
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("City_Air_Quality.csv")
+
+print("First 5 Records:")
+print(df.head())
+
+print("\nDataset Shape:")
+print(df.shape)
+
+print("\nColumn Names:")
+print(df.columns.tolist())
+
+print("\nDataset Information:")
+df.info()
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+df["Date"] = pd.to_datetime(
+    df["Date"],
+    format="%d-%m-%Y"
+)
+
+print("\nSummary Statistics:")
+print(df.describe())
+
+plt.figure(figsize=(10, 5))
+plt.plot(df["Date"], df["AQI"], marker="o")
+plt.title("AQI Trend Over Time")
+plt.xlabel("Date")
+plt.ylabel("AQI")
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize=(10, 5))
+plt.plot(df["Date"], df["PM2.5"], label="PM2.5")
+plt.plot(df["Date"], df["PM10"], label="PM10")
+plt.plot(df["Date"], df["CO"], label="CO")
+plt.title("Pollutant Levels Over Time")
+plt.xlabel("Date")
+plt.ylabel("Pollutant Level")
+plt.legend()
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize=(10, 5))
+plt.bar(df["Date"], df["AQI"])
+plt.title("AQI Comparison by Date")
+plt.xlabel("Date")
+plt.ylabel("AQI")
+plt.xticks(rotation=45)
+plt.show()
+
+plt.figure(figsize=(7, 5))
+plt.boxplot(df["AQI"].dropna())
+plt.title("AQI Distribution")
+plt.ylabel("AQI")
+plt.show()
+
+plt.figure(figsize=(8, 5))
+plt.scatter(df["PM2.5"], df["AQI"])
+plt.title("PM2.5 vs AQI")
+plt.xlabel("PM2.5")
+plt.ylabel("AQI")
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize=(8, 5))
+plt.scatter(df["PM10"], df["AQI"])
+plt.title("PM10 vs AQI")
+plt.xlabel("PM10")
+plt.ylabel("AQI")
+plt.grid(True)
+plt.show()
+
+plt.figure(figsize=(8, 5))
+plt.scatter(df["CO"], df["AQI"])
+plt.title("CO vs AQI")
+plt.xlabel("CO")
+plt.ylabel("CO")
+plt.grid(True)
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+
+
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# pandas library data read ani analysis sathi use hote
+# matplotlib.pyplot graphs create karnyasathi use hote
+
+df = pd.read_csv("City_Air_Quality.csv")
+# CSV file read karun data df DataFrame madhe store karto
+
+print("First 5 Records:")
+print(df.head())
+# Dataset madhil first 5 rows display karto
+
+print("\nDataset Shape:")
+print(df.shape)
+# Dataset madhil total rows ani columns show karto
+# Output format: (rows, columns)
+
+print("\nColumn Names:")
+print(df.columns.tolist())
+# Dataset madhil saglya column names chi list show karto
+
+print("\nDataset Information:")
+df.info()
+# Column names, data types ani non-null values show karto
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+# Pratyek column madhil missing values count karto
+
+df["Date"] = pd.to_datetime(
+    df["Date"],
+    format="%d-%m-%Y"
+)
+# Date column string madhun datetime format madhe convert karto
+# %d = Day, %m = Month, %Y = Four-digit Year
+
+print("\nSummary Statistics:")
+print(df.describe())
+# Numeric columns chi statistical information show karto
+# Count, Mean, Standard Deviation, Minimum, Maximum etc.
+
+# 1. AQI Trend Over Time
+plt.figure(figsize=(10, 5))
+# Graph cha size set karto
+
+plt.plot(df["Date"], df["AQI"], marker="o")
+# Date ani AQI madhil relationship line graph madhe show karto
+# marker="o" pratyek data point var circle show karto
+
+plt.title("AQI Trend Over Time")
+# Graph cha title set karto
+
+plt.xlabel("Date")
+# X-axis la Date label deto
+
+plt.ylabel("AQI")
+# Y-axis la AQI label deto
+
+plt.xticks(rotation=45)
+# X-axis varil dates 45 degree rotate karto
+
+plt.grid(True)
+# Graph madhe grid lines show karto
+
+plt.show()
+# Graph display karto
+
+
+# 2. Pollutant Levels Over Time
+plt.figure(figsize=(10, 5))
+
+plt.plot(df["Date"], df["PM2.5"], label="PM2.5")
+# PM2.5 pollutant level cha line graph create karto
+
+plt.plot(df["Date"], df["PM10"], label="PM10")
+# PM10 pollutant level cha line graph create karto
+
+plt.plot(df["Date"], df["CO"], label="CO")
+# CO pollutant level cha line graph create karto
+
+plt.title("Pollutant Levels Over Time")
+plt.xlabel("Date")
+plt.ylabel("Pollutant Level")
+
+plt.legend()
+# Graph madhil different lines identify karnyasathi labels show karto
+
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.show()
+
+
+# 3. AQI Comparison by Date
+plt.figure(figsize=(10, 5))
+
+plt.bar(df["Date"], df["AQI"])
+# Pratyek date cha AQI bar chart madhe show karto
+
+plt.title("AQI Comparison by Date")
+plt.xlabel("Date")
+plt.ylabel("AQI")
+
+plt.xticks(rotation=45)
+plt.show()
+
+
+# 4. AQI Distribution
+plt.figure(figsize=(7, 5))
+
+plt.boxplot(df["AQI"].dropna())
+# AQI data madhil distribution ani possible outliers show karto
+# dropna() missing values remove karto
+
+plt.title("AQI Distribution")
+plt.ylabel("AQI")
+plt.show()
+
+
+# 5. PM2.5 vs AQI
+plt.figure(figsize=(8, 5))
+
+plt.scatter(df["PM2.5"], df["AQI"])
+# PM2.5 ani AQI madhil relationship scatter plot madhe show karto
+
+plt.title("PM2.5 vs AQI")
+plt.xlabel("PM2.5")
+plt.ylabel("AQI")
+plt.grid(True)
+plt.show()
+
+
+# 6. PM10 vs AQI
+plt.figure(figsize=(8, 5))
+
+plt.scatter(df["PM10"], df["AQI"])
+# PM10 ani AQI madhil relationship show karto
+
+plt.title("PM10 vs AQI")
+plt.xlabel("PM10")
+plt.ylabel("AQI")
+plt.grid(True)
+plt.show()
+
+
+# 7. CO vs AQI
+plt.figure(figsize=(8, 5))
+
+plt.scatter(df["CO"], df["AQI"])
+# CO ani AQI madhil relationship show karto
+
+plt.title("CO vs AQI")
+plt.xlabel("CO")
+plt.ylabel("CO")
+# Note: Y-axis label code madhe CO aahe,
+# pan AQI plot hot aslyamule AQI label asne jast yogya aahe.
+
+plt.grid(True)
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q1. What is the aim of this practical?
+English: The aim is to analyze city air quality data and visualize AQI and pollutant levels using Python.
+
+Marathi-English: Ya practical cha aim city air quality data analyze karne ani AQI pollutants che graphs create karne aahe.
+Q2. What is AQI?
+English: AQI stands for Air Quality Index. It indicates how clean or polluted the air is.
+
+Marathi-English: AQI cha full form Air Quality Index aahe. Yatun air clean aahe ki polluted he samajte.
+Q3. What is pandas?
+English: Pandas is a Python library used for data manipulation and analysis.
+
+Marathi-English: Pandas hi Python library aahe ji data read, clean ani analyze karnyasathi use hote.
+Q4. What is Matplotlib?
+English: Matplotlib is a Python library used to create graphs and visualizations.
+
+Marathi-English: Matplotlib hi Python library graphs ani charts create karnyasathi use hote.
+Q5. What is a DataFrame?
+English: A DataFrame is a two-dimensional data structure containing rows and columns.
+
+Marathi-English: DataFrame ha rows ani columns aslela tabular data structure aahe.
+Q6. What is CSV?
+English: CSV stands for Comma-Separated Values. It stores data in a tabular format.
+
+Marathi-English: CSV cha full form Comma-Separated Values aahe. Ya file madhe data rows ani columns madhe store hoto.
+Q7. What is read_csv()?
+English: It is used to read a CSV file and convert it into a DataFrame.
+
+Marathi-English: read_csv() function CSV file read karun DataFrame madhe convert karto.
+Q8. What is head()?
+English: The head() function displays the first five rows by default.
+
+Marathi-English: head() function default ne dataset chya first five rows display karto.
+Q9. What is shape?
+English: Shape returns the total number of rows and columns in a dataset.
+
+Marathi-English: shape dataset madhil total rows ani columns chi sankhya show karto.
+Q10. What is columns.tolist()?
+English: It converts column names into a Python list.
+
+Marathi-English: Ha function dataset madhil column names Python list madhe convert karto.
+Q11. What is info()?
+English: It displays column names, data types and non-null values.
+
+Marathi-English: info() column names, data types ani non-null values show karto.
+Q12. What are missing values?
+English: Missing values are empty or unavailable values in a dataset.
+
+Marathi-English: Dataset madhe jithe data available nasto kiwa blank asto tyala missing value mhantat.
+Q13. What is isnull()?
+English: It checks whether values in a dataset are missing or null.
+
+Marathi-English: isnull() dataset madhil missing values check karto.
+Q14. What is sum() used for with isnull()?
+English: It counts the total missing values in each column.
+
+Marathi-English: isnull().sum() pratyek column madhil missing values count karto.
+Q15. Why do we use pd.to_datetime()?
+English: It converts date values into datetime format.
+
+Marathi-English: pd.to_datetime() date string la proper datetime format madhe convert karto.
+Q16. What does %d-%m-%Y mean?
+English: %d means day, %m means month and %Y means four-digit year.
+
+Marathi-English: %d mhanje day, %m mhanje month ani %Y mhanje four-digit year.
+Q17. What is describe()?
+English: It provides summary statistics such as count, mean, standard deviation, minimum and maximum.
+
+Marathi-English: describe() count, mean, standard deviation, minimum ani maximum values show karto.
+Q18. What is AQI trend analysis?
+English: It is the study of how AQI changes over a period of time.
+
+Marathi-English: Time nusar AQI madhe kase changes hotat yacha study mhanje AQI trend analysis.
+Q19. What is a line graph?
+English: A line graph connects data points with lines to show changes over time.
+
+Marathi-English: Line graph data points connect karto ani time nusar changes show karto.
+Q20. What is a bar chart?
+English: A bar chart represents data using rectangular bars.
+
+Marathi-English: Bar chart rectangular bars cha use karun data compare karto.
+Q21. What is a box plot?
+English: A box plot shows data distribution, median, quartiles and possible outliers.
+
+Marathi-English: Box plot data distribution, median, quartiles ani possible outliers show karto.
+Q22. What is an outlier?
+English: An outlier is a value that is very different from other values in a dataset.
+
+Marathi-English: Dataset madhil baki values peksha khup vegli asleli value mhanje outlier.
+Q23. What is a scatter plot?
+English: A scatter plot shows the relationship between two numerical variables.
+
+Marathi-English: Scatter plot don numerical variables madhil relationship show karto.
+Q24. Why do we use plt.scatter()?
+English: It creates a scatter plot to observe the relationship between two variables.
+
+Marathi-English: plt.scatter() don variables madhil relationship samjun ghenyasathi use karto.
+Q25. What is PM2.5?
+English: PM2.5 refers to fine particulate matter with a diameter of 2.5 micrometers or smaller.
+
+Marathi-English: PM2.5 mhanje 2.5 micrometers kiwa tyapeksha lahan size che air particles.
+Q26. What is PM10?
+English: PM10 refers to particulate matter with a diameter of 10 micrometers or smaller.
+
+Marathi-English: PM10 mhanje 10 micrometers kiwa tyapeksha lahan size che air particles.
+Q27. What is CO?
+English: CO stands for Carbon Monoxide. It is a harmful gas.
+
+Marathi-English: CO cha full form Carbon Monoxide aahe. Hi harmful gas aahe.
+Q28. What is plt.legend()?
+English: It displays labels to identify different lines or data series in a graph.
+
+Marathi-English: plt.legend() graph madhil different lines identify karnyasathi labels show karto.
+Q29. What is plt.grid(True)?
+English: It displays grid lines in the graph to make values easier to read.
+
+Marathi-English: plt.grid(True) graph madhe grid lines show karto, jyamule values read karne easy hote.
+Q30. Why do we use plt.show()?
+English: It displays the created graph on the screen.
+
+Marathi-English: plt.show() create kelela graph screen var display karto.
+
+4. Important extra viva questions (Tricky)
+Q31. What is the difference between PM2.5 and PM10?
+
+English:
+- PM2.5 particles are 2.5 micrometers or smaller.
+- PM10 particles are 10 micrometers or smaller.
+- PM2.5 particles are smaller and can penetrate deeper into the lungs.
+Marathi-English: PM2.5 che particles smaller astat, tar PM10 che comparatively larger astat. PM2.5 lungs madhe deeper jau shaktat.
+
+Q32. What is the difference between plot() and scatter()?
+
+English: plot() is generally used to show trends using lines, while scatter() shows individual points and relationships.
+
+Marathi-English: plot() line graph ani trends show karto, tar scatter() individual points ani relationship show karto.
+
+Q33. Why do we use dropna() in the box plot?
+
+English: It removes missing values before plotting the AQI distribution.
+
+Marathi-English: dropna() box plot create karnyapurvi missing values remove karto.
+
+Q34. What does figsize=(10,5) mean?
+
+English: It sets the graph size to 10 inches wide and 5 inches high.
+
+Marathi-English: figsize=(10,5) graph chi width 10 inches ani height 5 inches set karto.
+
+Q35. What is the difference between AQI and pollutants?
+
+English: Pollutants are harmful substances in the air, while AQI is an index that represents overall air quality.
+
+Marathi-English: Pollutants mhanje havetil harmful substances, tar AQI air quality chi overall condition show karto.
+
+
+
+'''
