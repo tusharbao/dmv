@@ -1,2 +1,613 @@
 #8_dmv_webAPI_weather.
 
+
+import requests
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+API_KEY = "56143ec79d064d605cc5401c08f309bc"
+CITY = "Pune"
+
+url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={API_KEY}&units=metric"
+response = requests.get(url)
+data = response.json()
+
+if response.status_code == 200:
+    records = []
+    for item in data["list"]:
+        records.append({
+            "Date": item["dt_txt"],
+            "Temperature": item["main"]["temp"],
+            "Humidity": item["main"]["humidity"],
+            "Pressure": item["main"]["pressure"],
+            "Wind Speed": item["wind"]["speed"],
+            "Rain": item.get("rain", {}).get("3h", 0)
+        })
+
+    weather_df = pd.DataFrame(records)
+    weather_df["Date"] = pd.to_datetime(weather_df["Date"])
+
+    print("Weather Data")
+    print(weather_df.head())
+
+    print("\nData Information")
+    print(weather_df.info())
+
+    print("\nMissing Values")
+    print(weather_df.isnull().sum())
+
+    weather_df.fillna(0, inplace=True)
+    weather_df.drop_duplicates(inplace=True)
+
+    print("\nCleaned Data")
+    print(weather_df.head())
+
+    print("\nStatistics")
+    print("Average Temperature:", weather_df["Temperature"].mean())
+    print("Maximum Temperature:", weather_df["Temperature"].max())
+    print("Minimum Temperature:", weather_df["Temperature"].min())
+    print("Average Humidity:", weather_df["Humidity"].mean())
+    print("Average Wind Speed:", weather_df["Wind Speed"].mean())
+
+    daily_data = weather_df.set_index("Date").resample("D").agg({
+        "Temperature": "mean",
+        "Humidity": "mean",
+        "Wind Speed": "mean",
+        "Rain": "sum"
+    })
+
+    print("\nDaily Weather Summary")
+    print(daily_data)
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(weather_df["Date"], weather_df["Temperature"], marker="o")
+    plt.title("Temperature Variation")
+    plt.xlabel("Date")
+    plt.ylabel("Temperature (°C)")
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+    plt.figure(figsize=(8, 5))
+    plt.bar(daily_data.index, daily_data["Rain"])
+    plt.title("Daily Rainfall")
+    plt.xlabel("Date")
+    plt.ylabel("Rainfall (mm)")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.show()
+
+    plt.figure(figsize=(8, 5))
+    plt.scatter(weather_df["Temperature"], weather_df["Humidity"])
+    plt.title("Temperature vs Humidity")
+    plt.xlabel("Temperature (°C)")
+    plt.ylabel("Humidity (%)")
+    plt.show()
+
+    plt.figure(figsize=(7, 5))
+    sns.heatmap(
+        weather_df[["Temperature", "Humidity", "Pressure", "Wind Speed", "Rain"]].corr(),
+        annot=True
+    )
+    plt.title("Weather Correlation Heatmap")
+    plt.show()
+
+    latitude = data["city"]["coord"]["lat"]
+    longitude = data["city"]["coord"]["lon"]
+    print("\nGeographical Information")
+    print("City:", CITY)
+    print("Latitude:", latitude)
+    print("Longitude:", longitude)
+else:
+    print("Error:", data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+
+
+# requests library API madhun data fetch karnyasathi use hote
+import requests
+
+# pandas library data handling, cleaning ani analysis sathi use hote
+import pandas as pd
+
+# matplotlib.pyplot graphs create karnyasathi use hote
+import matplotlib.pyplot as plt
+
+# seaborn library advanced ani attractive statistical graphs sathi use hote
+import seaborn as sns
+
+
+# OpenWeatherMap API chi API key store karto
+API_KEY = "56143ec79d064d605cc5401c08f309bc"
+
+# Jya city cha weather data pahije tya city che name store karto
+CITY = "Pune"
+
+
+# API URL create karto
+# CITY mule city select hote
+# API_KEY mule API access milto
+# units=metric mule temperature Celsius madhe milte
+url = f"https://api.openweathermap.org/data/2.5/forecast?q={CITY}&appid={API_KEY}&units=metric"
+
+# requests.get() function use karun API la GET request pathavto
+response = requests.get(url)
+
+# API kadun milalela JSON response Python dictionary madhe convert karto
+data = response.json()
+
+
+# Status code 200 asel tar API request successful zali aahe
+if response.status_code == 200:
+
+    # Weather records store karnyasathi empty list create karto
+    records = []
+
+    # API madhil list madhil pratyek weather record access karto
+    for item in data["list"]:
+
+        # Pratyek weather record madhil required information extract karto
+        records.append({
+
+            # Weather chi date ani time store karto
+            "Date": item["dt_txt"],
+
+            # Temperature Celsius madhe store karto
+            "Temperature": item["main"]["temp"],
+
+            # Humidity percentage madhe store karto
+            "Humidity": item["main"]["humidity"],
+
+            # Atmospheric pressure store karto
+            "Pressure": item["main"]["pressure"],
+
+            # Wind speed store karto
+            "Wind Speed": item["wind"]["speed"],
+
+            # Rainfall data available asel tar 3 hours rainfall gheto
+            # Rain data available nasel tar default value 0 gheto
+            "Rain": item.get("rain", {}).get("3h", 0)
+        })
+
+    # Records list cha Pandas DataFrame create karto
+    weather_df = pd.DataFrame(records)
+
+    # Date column string madhun datetime format madhe convert karto
+    weather_df["Date"] = pd.to_datetime(weather_df["Date"])
+
+
+    # Weather Data heading print karto
+    print("Weather Data")
+
+    # Dataset madhil first 5 rows display karto
+    print(weather_df.head())
+
+
+    # Data Information heading print karto
+    print("\nData Information")
+
+    # Dataset che columns, data types ani non-null values show karto
+    print(weather_df.info())
+
+
+    # Missing Values heading print karto
+    print("\nMissing Values")
+
+    # Pratyek column madhil missing values count karto
+    print(weather_df.isnull().sum())
+
+
+    # Missing values 0 ne replace karto
+    # inplace=True mule original DataFrame madhe changes hotat
+    weather_df.fillna(0, inplace=True)
+
+    # Dataset madhil duplicate rows remove karto
+    weather_df.drop_duplicates(inplace=True)
+
+
+    # Cleaned Data heading print karto
+    print("\nCleaned Data")
+
+    # Clean kelelya dataset madhil first 5 rows display karto
+    print(weather_df.head())
+
+
+    # Statistics heading print karto
+    print("\nStatistics")
+
+    # Temperature chi average value calculate karto
+    print("Average Temperature:", weather_df["Temperature"].mean())
+
+    # Temperature madhil maximum value calculate karto
+    print("Maximum Temperature:", weather_df["Temperature"].max())
+
+    # Temperature madhil minimum value calculate karto
+    print("Minimum Temperature:", weather_df["Temperature"].min())
+
+    # Humidity chi average value calculate karto
+    print("Average Humidity:", weather_df["Humidity"].mean())
+
+    # Wind Speed chi average value calculate karto
+    print("Average Wind Speed:", weather_df["Wind Speed"].mean())
+
+
+    # Date la index banvun daily weather data calculate karto
+    # Resample("D") mule data daily basis var group hoto
+    # agg() mule different columns var different operations perform hotat
+    daily_data = weather_df.set_index("Date").resample("D").agg({
+
+        # Pratyek day cha average temperature calculate karto
+        "Temperature": "mean",
+
+        # Pratyek day chi average humidity calculate karto
+        "Humidity": "mean",
+
+        # Pratyek day chi average wind speed calculate karto
+        "Wind Speed": "mean",
+
+        # Pratyek day cha total rainfall calculate karto
+        "Rain": "sum"
+    })
+
+
+    # Daily Weather Summary heading print karto
+    print("\nDaily Weather Summary")
+
+    # Daily summarized weather data display karto
+    print(daily_data)
+
+
+    # Graph chi width 10 ani height 5 inches set karto
+    plt.figure(figsize=(10, 5))
+
+    # Date nusar temperature variation line graph madhye show karto
+    # marker="o" mule each data point var circular marker disato
+    plt.plot(weather_df["Date"], weather_df["Temperature"], marker="o")
+
+    # Graph la title deto
+    plt.title("Temperature Variation")
+
+    # X-axis la Date label deto
+    plt.xlabel("Date")
+
+    # Y-axis la Temperature label deto
+    plt.ylabel("Temperature (°C)")
+
+    # X-axis var dates 45 degree rotate karto
+    plt.xticks(rotation=45)
+
+    # Graph var grid lines display karto
+    plt.grid(True)
+
+    # Graph madhil labels ani spacing properly adjust karto
+    plt.tight_layout()
+
+    # Temperature line graph display karto
+    plt.show()
+
+
+    # Graph chi width 8 ani height 5 inches set karto
+    plt.figure(figsize=(8, 5))
+
+    # Daily rainfall cha bar graph create karto
+    # X-axis var dates ani Y-axis var rainfall show hoto
+    plt.bar(daily_data.index, daily_data["Rain"])
+
+    # Graph la title deto
+    plt.title("Daily Rainfall")
+
+    # X-axis la Date label deto
+    plt.xlabel("Date")
+
+    # Y-axis la Rainfall label deto
+    plt.ylabel("Rainfall (mm)")
+
+    # Dates 45 degree rotate karto
+    plt.xticks(rotation=45)
+
+    # Graph layout properly adjust karto
+    plt.tight_layout()
+
+    # Daily rainfall bar graph display karto
+    plt.show()
+
+
+    # Graph chi width 8 ani height 5 inches set karto
+    plt.figure(figsize=(8, 5))
+
+    # Temperature ani Humidity madhil relationship scatter plot madhye show karto
+    plt.scatter(weather_df["Temperature"], weather_df["Humidity"])
+
+    # Graph la title deto
+    plt.title("Temperature vs Humidity")
+
+    # X-axis la Temperature label deto
+    plt.xlabel("Temperature (°C)")
+
+    # Y-axis la Humidity label deto
+    plt.ylabel("Humidity (%)")
+
+    # Scatter plot display karto
+    plt.show()
+
+
+    # Graph chi width 7 ani height 5 inches set karto
+    plt.figure(figsize=(7, 5))
+
+    # Selected weather columns madhil correlation calculate karto
+    # corr() mule numerical columns madhil correlation values miltat
+    # sns.heatmap() mule correlation heatmap create hoto
+    # annot=True mule heatmap var numerical values display hotat
+    sns.heatmap(
+        weather_df[["Temperature", "Humidity", "Pressure", "Wind Speed", "Rain"]].corr(),
+        annot=True
+    )
+
+    # Heatmap la title deto
+    plt.title("Weather Correlation Heatmap")
+
+    # Correlation heatmap display karto
+    plt.show()
+
+
+    # API response madhun city che latitude extract karto
+    latitude = data["city"]["coord"]["lat"]
+
+    # API response madhun city che longitude extract karto
+    longitude = data["city"]["coord"]["lon"]
+
+
+    # Geographical Information heading print karto
+    print("\nGeographical Information")
+
+    # City che name display karto
+    print("City:", CITY)
+
+    # City che latitude display karto
+    print("Latitude:", latitude)
+
+    # City che longitude display karto
+    print("Longitude:", longitude)
+
+
+# API request unsuccessful asel tar else block execute hoto
+else:
+
+    # API kadun milalela error message display karto
+    print("Error:", data)
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q1. What is an API?
+English Answer:
+API stands for Application Programming Interface. It allows two different applications to communicate and exchange data.
+
+Marathi + English Mix:
+API cha full form Application Programming Interface aahe. API mule don different applications ekmekansobat communicate karu shaktat ani data exchange karu shaktat.
+Q2. What is OpenWeatherMap API?
+English Answer:
+OpenWeatherMap API is a weather service that provides weather information such as temperature, humidity, rainfall, and wind speed.
+
+Marathi + English Mix:
+OpenWeatherMap API hi weather service aahe ji temperature, humidity, rainfall ani wind speed sarkhi weather information provide karte.
+Q3. What is the use of requests library?
+English Answer:
+The requests library is used to send HTTP requests and receive data from websites or APIs.
+
+Marathi + English Mix:
+Requests library HTTP requests send karun websites kiwa APIs madhun data receive karnyasathi use hote.
+Q4. What is an HTTP GET request?
+English Answer:
+GET is an HTTP method used to request or retrieve data from a server.
+
+Marathi + English Mix:
+GET ha HTTP method aahe jo server kadun data retrieve kiwa fetch karnyasathi use hoto.
+Q5. What is an API Key?
+English Answer:
+An API Key is a unique identification code used to authenticate and access an API.
+
+Marathi + English Mix:
+API Key ha unique identification code aahe jo API access ani authentication sathi use hoto.
+Q6. What is JSON?
+English Answer:
+JSON stands for JavaScript Object Notation. It is a lightweight format used to store and exchange data between applications.
+
+Marathi + English Mix:
+JSON cha full form JavaScript Object Notation aahe. Ha lightweight format applications madhye data store ani exchange karnyasathi use hoto.
+Q7. What is the use of response.json()?
+English Answer:
+The response.json() function converts the JSON response received from an API into Python data such as dictionaries and lists.
+
+Marathi + English Mix:
+response.json() function API kadun milalela JSON response Python data structure madhe convert karto, jase dictionary ani list.
+Q8. What is the use of status_code?
+English Answer:
+The status_code tells whether an HTTP request was successful or failed. Status code 200 means the request was successful.
+
+Marathi + English Mix:
+status_code mule API request successful zali ki fail zali he samajte. 200 status code mhanje request successful aahe.
+Q9. What is the difference between API and a website?
+English Answer:
+- API provides data to applications.
+- A website provides information mainly for users through a browser.
+Marathi + English Mix:
+- API applications na data provide karte.
+- Website browser madhun users na information display karte.
+Q10. What is the use of f-string in Python?
+English Answer:
+An f-string is used to insert variables directly into a string using curly brackets.
+
+Marathi + English Mix:
+f-string cha use string madhye variables directly insert karnyasathi hoto. Tyasathi curly brackets {} use kartat.
+Q11. What is the use of item["main"]["temp"]?
+English Answer:
+It accesses the temperature value from the main section of the weather API response.
+
+Marathi + English Mix:
+item["main"]["temp"] mule API response madhil main section madhun temperature value access karto.
+Q12. What is the use of get() function?
+English Answer:
+The get() function is used to access a dictionary value safely. It can return a default value if the key is missing.
+
+Marathi + English Mix:
+get() function dictionary madhil value safely access karnyasathi use hoto. Key available nasel tar default value return karu shakto.
+Q13. What is the difference between list and dictionary in Python?
+English Answer:
+- List stores multiple values in an ordered sequence.
+- Dictionary stores data in key-value pairs.
+Marathi + English Mix:
+- List madhye multiple values ordered sequence madhe store hotat.
+- Dictionary madhye data key-value pairs madhe store hoto.
+Q14. What is the use of pd.DataFrame()?
+English Answer:
+The pd.DataFrame() function converts structured data into a Pandas DataFrame containing rows and columns.
+
+Marathi + English Mix:
+pd.DataFrame() function structured data la Pandas DataFrame madhe convert karto, jyat rows ani columns astat.
+Q15. What is datetime?
+English Answer:
+Datetime is a Python data type used to represent date and time values.
+
+Marathi + English Mix:
+Datetime ha Python data type aahe jo date ani time represent karnyasathi use hoto.
+Q16. What is the use of pd.to_datetime()?
+English Answer:
+The pd.to_datetime() function converts date and time values into datetime format.
+
+Marathi + English Mix:
+pd.to_datetime() function date ani time values la datetime format madhe convert karto.
+Q17. What is resampling in Pandas?
+English Answer:
+Resampling is the process of converting time-series data from one time frequency to another, such as hourly to daily data.
+
+Marathi + English Mix:
+Resampling mhanje time-series data chi frequency change karne. Example: 3-hour weather data la daily data madhe convert karne.
+Q18. What is the use of set_index()?
+English Answer:
+The set_index() function sets a particular column as the index of a DataFrame.
+
+Marathi + English Mix:
+set_index() function DataFrame madhil particular column la index banavto. Ya practical madhe Date column index banavla aahe.
+Q19. What is the use of agg() function?
+English Answer:
+The agg() function is used to apply different aggregation operations, such as mean and sum, to DataFrame columns.
+
+Marathi + English Mix:
+agg() function DataFrame chya different columns var mean, sum sarkhe aggregation operations apply karnyasathi use hoto.
+Q20. What is the difference between mean(), max(), and min()?
+English Answer:
+- mean() calculates the average value.
+- max() returns the highest value.
+- min() returns the lowest value.
+Marathi + English Mix:
+- mean() average value calculate karto.
+- max() maximum kiwa highest value deto.
+- min() minimum kiwa lowest value deto.
+Q21. What is humidity?
+English Answer:
+Humidity is the amount of water vapour present in the air. It is usually measured in percentage.
+
+Marathi + English Mix:
+Humidity mhanje havemadhye present aslelya water vapour che प्रमाण. Te usually percentage madhe measure kartat.
+Q22. What is atmospheric pressure?
+English Answer:
+Atmospheric pressure is the pressure exerted by the weight of air in the atmosphere. It is commonly measured in hectopascals (hPa).
+
+Marathi + English Mix:
+Atmospheric pressure mhanje atmosphere madhil air mule create honara pressure. Te commonly hectopascals (hPa) madhe measure kartat.
+Q23. What is the difference between weather and climate?
+English Answer:
+- Weather describes short-term atmospheric conditions.
+- Climate describes the average weather conditions of a region over a long period.
+Marathi + English Mix:
+- Weather mhanje short-term atmospheric conditions.
+- Climate mhanje ekhadya region madhil long-term average weather conditions.
+Q24. What is a Line Graph?
+English Answer:
+A Line Graph represents data points connected by lines. It is used to show changes or trends over time.
+
+Marathi + English Mix:
+Line Graph madhye data points lines ne connect kelele astat. Time nusar data madhil changes ani trends show karnyasathi use hoto.
+Q25. What is a Scatter Plot?
+English Answer:
+A Scatter Plot represents data using individual points. It is used to identify relationships between two numerical variables.
+
+Marathi + English Mix:
+Scatter Plot madhye individual points use kele jatat. Don numerical variables madhil relationship identify karnyasathi use hoto.
+Q26. What is a Heatmap?
+English Answer:
+A Heatmap is a graphical representation of data where different colours represent different numerical values.
+
+Marathi + English Mix:
+Heatmap ha data cha graphical representation aahe jyat different colours numerical values represent kartat. Ya practical madhe weather variables madhil correlation show hoto.
+Q27. What is correlation?
+English Answer:
+Correlation measures the relationship between two numerical variables. Its value ranges from -1 to +1.
+
+Marathi + English Mix:
+Correlation don numerical variables madhil relationship measure karto. Tyachi value -1 te +1 ya range madhe aste.
+Q28. What is the difference between positive and negative correlation?
+English Answer:
+- Positive correlation means both variables tend to increase or decrease together.
+- Negative correlation means one variable tends to increase when the other decreases.
+Marathi + English Mix:
+- Positive correlation mhanje donhi variables generally ekatra increase kiwa decrease hotat.
+- Negative correlation mhanje ek variable increase zala tar dusra decrease honyachi tendency aste.
+Q29. What are Latitude and Longitude?
+English Answer:
+Latitude and Longitude are geographical coordinates used to identify the exact location of a place on Earth.
+
+Marathi + English Mix:
+Latitude ani Longitude he geographical coordinates aahet je Earth varil ekhadya place chi location identify karnyasathi use hotat. Latitude north-south position ani Longitude east-west position show karto.
+Q30. Which graphs are used in this practical and why?
+English Answer:
+1. Line Graph – To show temperature variation over time.
+2. Bar Graph – To compare daily rainfall.
+3. Scatter Plot – To show the relationship between temperature and humidity.
+4. Heatmap – To show correlation between weather variables.
+Marathi + English Mix:
+1. Line Graph: Time nusar temperature madhil changes show karnyasathi.
+2. Bar Graph: Daily rainfall compare karnyasathi.
+3. Scatter Plot: Temperature ani humidity madhil relationship show karnyasathi.
+4. Heatmap: Different weather variables madhil correlation show karnyasathi.
+
+
+
+'''
