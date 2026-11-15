@@ -1,0 +1,654 @@
+#9.data cleaning and preparation
+
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+
+df = pd.read_csv("WA_Fn-UseC_-Telco-Customer-Churn.csv")
+
+print("Dataset Loaded Successfully!")
+print("\nFirst 5 Records")
+print(df.head())
+print("\nDataset Shape")
+print(df.shape)
+print("\nColumn Names")
+print(df.columns.tolist())
+print("\nDataset Information")
+df.info()
+print("\nMissing Values")
+print(df.isnull().sum())
+
+df["TotalCharges"] = pd.to_numeric(
+    df["TotalCharges"],
+    errors="coerce"
+)
+
+for col in df.select_dtypes(include="object").columns:
+    df[col] = df[col].astype(str).str.strip()
+
+for col in df.select_dtypes(include=np.number).columns:
+    df[col] = df[col].fillna(df[col].median())
+
+for col in df.select_dtypes(include="object").columns:
+    df[col] = df[col].fillna(df[col].mode()[0])
+
+print("\nMissing Values After Cleaning")
+print(df.isnull().sum())
+
+print("\nDuplicate Records")
+print(df.duplicated().sum())
+
+df.drop_duplicates(inplace=True)
+
+print("\nShape After Removing Duplicates")
+print(df.shape)
+
+df["Churn"] = df["Churn"].replace({
+    "Yes": 1,
+    "No": 0
+})
+
+df["Churn"] = pd.to_numeric(
+    df["Churn"],
+    errors="coerce"
+)
+
+df.dropna(subset=["Churn"], inplace=True)
+
+df["AvgMonthlySpend"] = (
+    df["TotalCharges"] / (df["tenure"] + 1)
+)
+
+df["LongTermCustomer"] = np.where(
+    df["tenure"] >= 24,
+    1,
+    0
+)
+
+print("\nFeature Engineering Completed")
+
+numeric_cols = [
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges"
+]
+
+for col in numeric_cols:
+    Q1 = df[col].quantile(0.25)
+    Q3 = df[col].quantile(0.75)
+    IQR = Q3 - Q1
+    lower = Q1 - 1.5 * IQR
+    upper = Q3 + 1.5 * IQR
+    df[col] = df[col].clip(lower, upper)
+
+print("\nOutliers Handled")
+
+df.drop("customerID", axis=1, inplace=True)
+
+categorical_cols = df.select_dtypes(
+    include="object"
+).columns
+
+for col in categorical_cols:
+    encoder = LabelEncoder()
+    df[col] = encoder.fit_transform(df[col])
+
+X = df.drop("Churn", axis=1)
+y = df["Churn"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+
+scale_cols = [
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges",
+    "AvgMonthlySpend"
+]
+
+scaler = StandardScaler()
+X_train[scale_cols] = scaler.fit_transform(
+    X_train[scale_cols]
+)
+X_test[scale_cols] = scaler.transform(
+    X_test[scale_cols]
+)
+
+print("\nScaling Completed")
+print("\nTraining Data Shape")
+print(X_train.shape)
+print("\nTesting Data Shape")
+print(X_test.shape)
+
+df.to_csv(
+    "Telecom_Customer_Churn_Cleaned.csv",
+    index=False
+)
+
+print("\nCleaned Dataset Saved Successfully!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+
+
+# Pandas library data reading, manipulation ani analysis sathi import karto
+import pandas as pd
+
+# NumPy library numerical operations ani array operations sathi import karto
+import numpy as np
+
+# LabelEncoder categorical data la numerical form madhe convert karto
+# StandardScaler numerical data scale karnyasathi use hoto
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
+# train_test_split dataset la training ani testing parts madhe divide karto
+from sklearn.model_selection import train_test_split
+
+
+# CSV file madhun Telecom Customer Churn dataset load karto
+df = pd.read_csv("WA_Fn-UseC_-Telco-Customer-Churn.csv")
+
+
+# Dataset successfully load zalyacha message display karto
+print("Dataset Loaded Successfully!")
+
+# Dataset madhil first 5 records display karto
+print("\nFirst 5 Records")
+print(df.head())
+
+# Dataset madhil total rows ani columns chi sankhya show karto
+print("\nDataset Shape")
+print(df.shape)
+
+# Dataset madhil sarva column names list form madhe display karto
+print("\nColumn Names")
+print(df.columns.tolist())
+
+# Dataset chi complete information display karto
+print("\nDataset Information")
+# Column names, data types ani non-null values show karto
+df.info()
+
+# Dataset madhil missing values count karto
+print("\nMissing Values")
+print(df.isnull().sum())
+
+
+# TotalCharges column la numerical data type madhe convert karto
+# errors="coerce" mule invalid values NaN madhe convert hotat
+df["TotalCharges"] = pd.to_numeric(
+    df["TotalCharges"],
+    errors="coerce"
+)
+
+
+# Object type columns madhil text values clean karto
+for col in df.select_dtypes(include="object").columns:
+
+    # astype(str) mule values string madhe convert hotat
+    # str.strip() mule text chya starting ani ending madhil extra spaces remove hotat
+    df[col] = df[col].astype(str).str.strip()
+
+
+# Dataset madhil numerical columns select karto
+for col in df.select_dtypes(include=np.number).columns:
+
+    # Numerical columns madhil missing values median ne replace karto
+    df[col] = df[col].fillna(df[col].median())
+
+
+# Dataset madhil categorical/object columns select karto
+for col in df.select_dtypes(include="object").columns:
+
+    # Categorical columns madhil missing values mode ne replace karto
+    # mode()[0] mule most frequently occurring value milte
+    df[col] = df[col].fillna(df[col].mode()[0])
+
+
+# Data cleaning nantar remaining missing values check karto
+print("\nMissing Values After Cleaning")
+print(df.isnull().sum())
+
+
+# Dataset madhil duplicate records count karto
+print("\nDuplicate Records")
+print(df.duplicated().sum())
+
+
+# Duplicate rows original DataFrame madhun remove karto
+df.drop_duplicates(inplace=True)
+
+
+# Duplicate records remove kelyanantar dataset cha shape display karto
+print("\nShape After Removing Duplicates")
+print(df.shape)
+
+
+# Churn column madhil Yes la 1 ani No la 0 madhe convert karto
+# Yes = Customer left, No = Customer stayed
+df["Churn"] = df["Churn"].replace({
+    "Yes": 1,
+    "No": 0
+})
+
+
+# Churn column numerical format madhe convert karto
+# Invalid values astil tar te NaN madhe convert hotat
+df["Churn"] = pd.to_numeric(
+    df["Churn"],
+    errors="coerce"
+)
+
+
+# Churn column madhil missing values aslelya rows remove karto
+df.dropna(subset=["Churn"], inplace=True)
+
+
+# Average monthly spending sathi new feature create karto
+# TotalCharges la tenure + 1 ne divide karto
+# +1 mule tenure zero asel tari division by zero hot nahi
+df["AvgMonthlySpend"] = (
+    df["TotalCharges"] / (df["tenure"] + 1)
+)
+
+
+# Customer 24 months kiwa tyapeksha jast time pasun asel tar 1
+# Nahi tar 0 assign karto
+# np.where() condition check karun values assign karto
+df["LongTermCustomer"] = np.where(
+    df["tenure"] >= 24,
+    1,
+    0
+)
+
+
+# Feature engineering complete zalyacha message display karto
+print("\nFeature Engineering Completed")
+
+
+# Outlier handling sathi numerical columns chi list create karto
+numeric_cols = [
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges"
+]
+
+
+# List madhil pratyek numerical column var loop execute karto
+for col in numeric_cols:
+
+    # Q1 mhanje first quartile (25th percentile)
+    Q1 = df[col].quantile(0.25)
+
+    # Q3 mhanje third quartile (75th percentile)
+    Q3 = df[col].quantile(0.75)
+
+    # IQR mhanje Q3 ani Q1 madhil difference
+    IQR = Q3 - Q1
+
+    # Lower limit calculate karto
+    lower = Q1 - 1.5 * IQR
+
+    # Upper limit calculate karto
+    upper = Q3 + 1.5 * IQR
+
+    # Lower ani upper limits chya baheril values limits paryant clip karto
+    # Mhanje extreme values replace hotat, rows delete hot nahit
+    df[col] = df[col].clip(lower, upper)
+
+
+# Outlier handling complete zalyacha message display karto
+print("\nOutliers Handled")
+
+
+# customerID column dataset madhun remove karto
+# axis=1 mhanje column remove karaycha
+# inplace=True mule original DataFrame update hoto
+df.drop("customerID", axis=1, inplace=True)
+
+
+# Dataset madhil sarva categorical/object columns select karto
+categorical_cols = df.select_dtypes(
+    include="object"
+).columns
+
+
+# Pratyek categorical column var loop execute karto
+for col in categorical_cols:
+
+    # LabelEncoder object create karto
+    encoder = LabelEncoder()
+
+    # Categorical text values la numerical labels madhe convert karto
+    # Example: Male/Female la 0/1 milu shaktat
+    df[col] = encoder.fit_transform(df[col])
+
+
+# Churn column sodun remaining columns features (X) madhe store karto
+X = df.drop("Churn", axis=1)
+
+# Churn column target variable (y) madhe store karto
+y = df["Churn"]
+
+
+# Dataset training ani testing parts madhe divide karto
+X_train, X_test, y_train, y_test = train_test_split(
+
+    # Input features training ani testing sathi deto
+    X,
+
+    # Target variable training ani testing sathi deto
+    y,
+
+    # 20% data testing sathi ani 80% training sathi use karto
+    test_size=0.20,
+
+    # Random splitting repeat kelyavar same result milnyasathi
+    random_state=42,
+
+    # Training ani testing madhye target classes che proportion maintain karto
+    stratify=y
+)
+
+
+# StandardScaler sathi numerical columns chi list create karto
+scale_cols = [
+    "tenure",
+    "MonthlyCharges",
+    "TotalCharges",
+    "AvgMonthlySpend"
+]
+
+
+# StandardScaler object create karto
+scaler = StandardScaler()
+
+# Training data var mean ani standard deviation calculate karto
+# Ani training data scale karto
+X_train[scale_cols] = scaler.fit_transform(
+    X_train[scale_cols]
+)
+
+# Testing data la training data che same scaling parameters apply karto
+# fit_transform nahi, fakt transform use karto
+X_test[scale_cols] = scaler.transform(
+    X_test[scale_cols]
+)
+
+
+# Scaling complete zalyacha message display karto
+print("\nScaling Completed")
+
+# Training dataset madhil rows ani columns chi sankhya display karto
+print("\nTraining Data Shape")
+print(X_train.shape)
+
+# Testing dataset madhil rows ani columns chi sankhya display karto
+print("\nTesting Data Shape")
+print(X_test.shape)
+
+
+# Cleaned dataset CSV file madhe save karto
+df.to_csv(
+
+    # Output CSV file che name
+    "Telecom_Customer_Churn_Cleaned.csv",
+
+    # index=False mule extra index column save hot nahi
+    index=False
+)
+
+
+# Dataset successfully save zalyacha message display karto
+print("\nCleaned Dataset Saved Successfully!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q1. What is Data Preprocessing?
+English Answer:
+Data Preprocessing is the process of cleaning and transforming raw data into a suitable format for analysis and machine learning.
+
+Marathi + English Mix:
+Data Preprocessing mhanje raw data clean ani transform karun analysis ani machine learning sathi ready karne.
+Q2. What is Telecom Customer Churn?
+English Answer:
+Customer Churn means when a customer stops using a company's services. In telecom, it means a customer leaves the network or subscription.
+
+Marathi + English Mix:
+Customer Churn mhanje customer company chi service use karne band karto. Telecom madhe customer mobile network kiwa subscription sodun deto.
+Q3. What is the use of NumPy?
+English Answer:
+NumPy is a Python library used for numerical calculations, mathematical operations, and working with arrays.
+
+Marathi + English Mix:
+NumPy hi Python library aahe ji numerical calculations, mathematical operations ani arrays var work karnyasathi use hote.
+Q4. What is the use of select_dtypes()?
+English Answer:
+The select_dtypes() function selects columns based on their data types, such as numerical or object columns.
+
+Marathi + English Mix:
+select_dtypes() function data types nusar columns select karto. Example: numerical columns kiwa object columns.
+Q5. What is the difference between numerical and categorical data?
+English Answer:
+- Numerical data contains numbers, such as age, salary, and charges.
+- Categorical data contains categories, such as gender, city, and payment method.
+Marathi + English Mix:
+- Numerical data mhanje numbers madhil data, jase age, salary ani charges.
+- Categorical data mhanje categories madhil data, jase gender, city ani payment method.
+Q6. What is data type conversion?
+English Answer:
+Data type conversion means changing data from one type to another, such as converting text into numbers.
+
+Marathi + English Mix:
+Data type conversion mhanje data cha type change karne. Example: text data la numerical data madhe convert karne.
+Q7. What is the use of pd.to_numeric()?
+English Answer:
+The pd.to_numeric() function converts data into numerical format. The errors="coerce" parameter converts invalid values into NaN.
+
+Marathi + English Mix:
+pd.to_numeric() function data la numerical format madhe convert karto. errors="coerce" mule invalid values NaN madhe convert hotat.
+Q8. What is NaN?
+English Answer:
+NaN stands for Not a Number. It represents missing or invalid numerical values in a dataset.
+
+Marathi + English Mix:
+NaN cha meaning Not a Number aahe. Dataset madhil missing kiwa invalid numerical values represent karnyasathi use hoto.
+Q9. What is the difference between Mean, Median, and Mode?
+English Answer:
+- Mean is the average of all values.
+- Median is the middle value of sorted data.
+- Mode is the most frequently occurring value.
+Marathi + English Mix:
+- Mean mhanje sarva values chi average.
+- Median mhanje sorted data madhil middle value.
+- Mode mhanje sarvat jast vela repeat honari value.
+Q10. Why do we use Median for missing numerical values?
+English Answer:
+Median is used because it is less affected by extreme values and outliers compared to the mean.
+
+Marathi + English Mix:
+Numerical missing values fill karnyasathi median use karto karan mean peksha median var extreme values ani outliers cha kami effect hoto.
+Q11. What is Mode Imputation?
+English Answer:
+Mode Imputation is a technique used to replace missing categorical values with the most frequently occurring value.
+
+Marathi + English Mix:
+Mode Imputation mhanje categorical data madhil missing values la sarvat jast vela yenarya value ne replace karne.
+Q12. What is the use of str.strip()?
+English Answer:
+The str.strip() function removes extra spaces from the beginning and end of text values.
+
+Marathi + English Mix:
+str.strip() function text chya starting ani ending madhil extra spaces remove karto.
+Q13. What are duplicate records?
+English Answer:
+Duplicate records are repeated rows containing the same data in a dataset.
+
+Marathi + English Mix:
+Duplicate records mhanje dataset madhil same data aslelya repeated rows.
+Q14. What is Feature Engineering?
+English Answer:
+Feature Engineering is the process of creating new useful features from existing data to improve machine learning performance.
+
+Marathi + English Mix:
+Feature Engineering mhanje existing data madhun new useful features create karne, jyamule machine learning model chi performance improve hou shakte.
+Q15. What is a Feature?
+English Answer:
+A Feature is an input variable or column used by a machine learning model to make predictions.
+
+Marathi + English Mix:
+Feature mhanje machine learning model la prediction karnyasathi dilela input variable kiwa column.
+Q16. What is a Target Variable?
+English Answer:
+A Target Variable is the output that a machine learning model tries to predict.
+
+Marathi + English Mix:
+Target Variable mhanje model jya output chi prediction karnyacha prayatna karto to variable.
+Q17. What is the use of np.where()?
+English Answer:
+The np.where() function checks a condition and returns different values depending on whether the condition is true or false.
+
+Marathi + English Mix:
+np.where() function condition check karto. Condition true asel tar ek value ani false asel tar dusri value assign karto.
+Q18. What are outliers?
+English Answer:
+Outliers are unusually high or low values that are very different from other values in a dataset.
+
+Marathi + English Mix:
+Outliers mhanje dataset madhil asha values jya baki values peksha khup jast kiwa kami astat.
+Q19. What is IQR?
+English Answer:
+IQR stands for Interquartile Range. It is the difference between the third quartile (Q3) and first quartile (Q1).
+
+Marathi + English Mix:
+IQR cha full form Interquartile Range aahe. Q3 ani Q1 madhil difference la IQR mhantat.
+Q20. What are Q1, Q2, and Q3?
+English Answer:
+- Q1 is the 25th percentile.
+- Q2 is the 50th percentile or median.
+- Q3 is the 75th percentile.
+Marathi + English Mix:
+- Q1 mhanje 25th percentile.
+- Q2 mhanje 50th percentile kiwa median.
+- Q3 mhanje 75th percentile.
+Q21. What is the use of clip() function?
+English Answer:
+The clip() function limits values within specified lower and upper boundaries. It is used to handle extreme values.
+
+Marathi + English Mix:
+clip() function values la specified lower ani upper limits madhye thevto. Extreme values handle karnyasathi use hoto.
+Q22. What is Label Encoding?
+English Answer:
+Label Encoding is a technique used to convert categorical text values into numerical values.
+
+Marathi + English Mix:
+Label Encoding hi technique categorical text values la numerical values madhe convert karnyasathi use hote.
+Q23. What is StandardScaler?
+English Answer:
+StandardScaler is a preprocessing technique that standardizes numerical data by making its mean approximately 0 and standard deviation 1.
+
+Marathi + English Mix:
+StandardScaler hi preprocessing technique aahe ji numerical data scale karte. Yat mean 0 ani standard deviation 1 hote.
+Q24. What is the difference between fit(), transform(), and fit_transform()?
+English Answer:
+- fit() learns the parameters from data.
+- transform() applies the learned parameters.
+- fit_transform() performs both operations together.
+Marathi + English Mix:
+- fit() data madhun required parameters learn karto.
+- transform() learned parameters apply karto.
+- fit_transform() donhi operations ekatra perform karto.
+Q25. What is Train-Test Split?
+English Answer:
+Train-Test Split is a technique used to divide a dataset into training and testing parts. Training data is used to train the model, while testing data is used to evaluate it.
+
+Marathi + English Mix:
+Train-Test Split mhanje dataset la training ani testing parts madhe divide karne. Training data model train karnyasathi ani testing data model evaluate karnyasathi use hoto.
+80:20 Train-Test Split
+
+
+
+80% Training Data
+
+20% Testing Data
+
+
+Q26. What is the use of random_state=42?
+English Answer:
+random_state=42 ensures reproducibility. It helps to get the same random split whenever the code is executed with the same data and settings.
+
+Marathi + English Mix:
+random_state=42 mule code punha execute kelyavar same random train-test split milto. Yala reproducibility mhantat.
+Q27. What is stratify=y?
+English Answer:
+The stratify parameter maintains the same proportion of target classes in both training and testing datasets.
+
+Marathi + English Mix:
+stratify=y mule training ani testing dataset madhye target classes cha same proportion maintain hoto. Ya practical madhe Churn Yes ani No cha proportion maintain hoto.
+Q28. What is the difference between Training Data and Testing Data?
+English Answer:
+- Training Data is used to teach the machine learning model.
+- Testing Data is used to check how well the trained model performs on unseen data.
+Marathi + English Mix:
+- Training Data model la train karnyasathi use hoto.
+- Testing Data mule trained model unseen data var kiti changla perform karto he check karta yete.
+Q29. Why do we use StandardScaler only after Train-Test Split?
+English Answer:
+We split the data first to prevent data leakage. The scaler learns mean and standard deviation from training data and applies the same values to testing data.
+
+Marathi + English Mix:
+Data leakage avoid karnyasathi pahile Train-Test Split karto. Nantar scaler fakt training data madhun mean ani standard deviation learn karto ani tech parameters testing data var apply karto.
+Q30. What is the use of to_csv() function?
+English Answer:
+The to_csv() function saves a Pandas DataFrame into a CSV file.
+
+Marathi + English Mix:
+to_csv() function Pandas DataFrame la CSV file madhe save karnyasathi use hoto. Ya practical madhe cleaned dataset save kela aahe.
+
+
+
+'''
