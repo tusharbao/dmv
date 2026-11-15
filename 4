@@ -1,0 +1,514 @@
+#10.data wrangling
+
+
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("RealEstate_Prices_Cleaned.csv")
+
+print("Original Data:")
+print(df.head())
+
+df.columns = (
+    df.columns
+    .str.strip()
+    .str.lower()
+    .str.replace(" ", "_")
+    .str.replace(r"[^a-zA-Z0-9_]", "", regex=True)
+)
+
+print("\nColumn Names:")
+print(df.columns.tolist())
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+numeric_cols = df.select_dtypes(include=np.number).columns
+for col in numeric_cols:
+    df[col] = df[col].fillna(df[col].median())
+
+categorical_cols = df.select_dtypes(include="object").columns
+for col in categorical_cols:
+    df[col] = df[col].fillna(df[col].mode()[0])
+
+print("\nMissing Values After Cleaning:")
+print(df.isnull().sum())
+
+print("\nNo Additional Dataset Available for Merging.")
+
+filtered_data = df[df["price"] > 500000]
+
+print("\nHouses with Price Greater Than 500000:")
+print(filtered_data.head())
+
+print("\nAverage House Price:")
+print(df["price"].mean())
+
+print("\nAverage Price by Bedrooms:")
+print(df.groupby("bedrooms")["price"].mean())
+
+Q1 = df["price"].quantile(0.25)
+Q3 = df["price"].quantile(0.75)
+IQR = Q3 - Q1
+lower_limit = Q1 - 1.5 * IQR
+upper_limit = Q3 + 1.5 * IQR
+
+print("\nLower Limit:", lower_limit)
+print("Upper Limit:", upper_limit)
+
+df_clean = df[
+    (df["price"] >= lower_limit) &
+    (df["price"] <= upper_limit)
+]
+
+print("\nRecords Before Removing Outliers:", len(df))
+print("Records After Removing Outliers:", len(df_clean))
+
+categorical_cols = df_clean.select_dtypes(
+    include="object"
+).columns
+
+df_clean = pd.get_dummies(
+    df_clean,
+    columns=categorical_cols,
+    drop_first=True
+)
+
+print("\nEncoded Data:")
+print(df_clean.head())
+
+df_clean.to_csv(
+    "RealEstate_Prices_Final.csv",
+    index=False
+)
+
+print("\nData Wrangling Completed Successfully!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+# Pandas library data reading, cleaning ani manipulation sathi import karto
+import pandas as pd
+
+# NumPy library numerical operations ani calculations sathi import karto
+import numpy as np
+
+
+# CSV file madhun Real Estate dataset read karun df madhe store karto
+df = pd.read_csv("RealEstate_Prices_Cleaned.csv")
+
+
+# Original Data heading print karto
+print("Original Data:")
+
+# Dataset madhil first 5 records display karto
+print(df.head())
+
+
+# Dataset madhil column names clean ani standardize karto
+df.columns = (
+
+    # Column names chya starting ani ending madhil extra spaces remove karto
+    df.columns
+
+    # Sarva column names lowercase madhe convert karto
+    .str.strip()
+
+    # Column names madhil spaces la underscore (_) ne replace karto
+    .str.lower()
+
+    # Special characters remove karun spaces la underscore karto
+    .str.replace(" ", "_")
+
+    # Letters, numbers ani underscore sodun baki special characters remove karto
+    .str.replace(r"[^a-zA-Z0-9_]", "", regex=True)
+)
+
+
+# Column Names heading print karto
+print("\nColumn Names:")
+
+# Clean kelelya column names chi list display karto
+print(df.columns.tolist())
+
+
+# Missing Values heading print karto
+print("\nMissing Values:")
+
+# Pratyek column madhil missing values count karto
+print(df.isnull().sum())
+
+
+# Dataset madhil numerical columns select karto
+numeric_cols = df.select_dtypes(include=np.number).columns
+
+# Pratyek numerical column var loop execute karto
+for col in numeric_cols:
+
+    # Numerical columns madhil missing values median ne replace karto
+    df[col] = df[col].fillna(df[col].median())
+
+
+# Dataset madhil categorical/object columns select karto
+categorical_cols = df.select_dtypes(include="object").columns
+
+# Pratyek categorical column var loop execute karto
+for col in categorical_cols:
+
+    # Missing categorical values la most frequently occurring value ne replace karto
+    df[col] = df[col].fillna(df[col].mode()[0])
+
+
+# Data cleaning nantar missing values check karto
+print("\nMissing Values After Cleaning:")
+
+# Pratyek column madhil remaining missing values count karto
+print(df.isnull().sum())
+
+
+# Additional dataset available naslyamule merging perform hot nahi he display karto
+print("\nNo Additional Dataset Available for Merging.")
+
+
+# Price 500000 peksha jast aslelya houses filter karto
+# Condition true aslelya rows filtered_data madhe store hotat
+filtered_data = df[df["price"] > 500000]
+
+
+# Filtered houses chi heading print karto
+print("\nHouses with Price Greater Than 500000:")
+
+# Filter kelelya data madhil first 5 records display karto
+print(filtered_data.head())
+
+
+# Average House Price heading print karto
+print("\nAverage House Price:")
+
+# Sarva houses chya price chi average calculate karto
+print(df["price"].mean())
+
+
+# Bedrooms nusar houses group karto
+# Pratyek bedroom category chi average price calculate karto
+print("\nAverage Price by Bedrooms:")
+print(df.groupby("bedrooms")["price"].mean())
+
+
+# Price column cha first quartile calculate karto
+# Q1 mhanje 25th percentile
+Q1 = df["price"].quantile(0.25)
+
+# Price column cha third quartile calculate karto
+# Q3 mhanje 75th percentile
+Q3 = df["price"].quantile(0.75)
+
+# Q3 ani Q1 madhil difference calculate karto
+IQR = Q3 - Q1
+
+# Outliers identify karnyasathi lower limit calculate karto
+lower_limit = Q1 - 1.5 * IQR
+
+# Outliers identify karnyasathi upper limit calculate karto
+upper_limit = Q3 + 1.5 * IQR
+
+
+# Lower Limit display karto
+print("\nLower Limit:", lower_limit)
+
+# Upper Limit display karto
+print("Upper Limit:", upper_limit)
+
+
+# Lower ani upper limit chya madhil prices aslelya records select karto
+# Limits chya baheril outliers remove hotat
+df_clean = df[
+    (df["price"] >= lower_limit) &
+    (df["price"] <= upper_limit)
+]
+
+
+# Outlier removal chya adhi total records count karto
+print("\nRecords Before Removing Outliers:", len(df))
+
+# Outlier removal nantar remaining records count karto
+print("Records After Removing Outliers:", len(df_clean))
+
+
+# Cleaned dataset madhil categorical/object columns select karto
+categorical_cols = df_clean.select_dtypes(
+    include="object"
+).columns
+
+
+# Categorical columns la numerical dummy columns madhe convert karto
+df_clean = pd.get_dummies(
+
+    # Encoding karaycha dataset
+    df_clean,
+
+    # Convert karayche categorical columns
+    columns=categorical_cols,
+
+    # First category drop karto, jyamule unnecessary extra column avoid hoto
+    drop_first=True
+)
+
+
+# Encoded Data heading print karto
+print("\nEncoded Data:")
+
+# Encoding nantar first 5 records display karto
+print(df_clean.head())
+
+
+# Final cleaned dataset CSV file madhe save karto
+df_clean.to_csv(
+
+    # Output file che name
+    "RealEstate_Prices_Final.csv",
+
+    # Extra index column save hou naye mhanun False use karto
+    index=False
+)
+
+
+# Data wrangling successfully complete zalyacha message display karto
+print("\nData Wrangling Completed Successfully!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+Q1. What is Data Wrangling?
+English Answer:
+Data Wrangling is the process of cleaning, transforming, and organizing raw data into a useful format for analysis.
+
+Marathi + English Mix:
+Data Wrangling mhanje raw data clean, transform ani organize karun analysis sathi useful format madhe convert karne.
+Q2. What is the use of Pandas?
+English Answer:
+Pandas is a Python library used for data manipulation, data cleaning, and data analysis.
+
+Marathi + English Mix:
+Pandas hi Python library aahe ji data manipulation, data cleaning ani data analysis sathi use hote.
+Q3. What is the use of NumPy?
+English Answer:
+NumPy is a Python library used for numerical calculations and mathematical operations.
+
+Marathi + English Mix:
+NumPy hi Python library numerical calculations ani mathematical operations sathi use hote.
+Q4. What is Data Cleaning?
+English Answer:
+Data Cleaning is the process of removing incorrect, duplicate, and missing values from a dataset.
+
+Marathi + English Mix:
+Data Cleaning mhanje dataset madhil incorrect, duplicate ani missing values remove kiwa correct karne.
+Q5. What is the difference between Data Cleaning and Data Wrangling?
+English Answer:
+- Data Cleaning focuses on correcting errors and handling missing or duplicate values.
+- Data Wrangling includes cleaning, transforming, organizing, and preparing data for analysis.
+Marathi + English Mix:
+- Data Cleaning madhye errors correct karne ani missing kiwa duplicate values handle karne yavar focus asto.
+- Data Wrangling madhye cleaning sobat data transform, organize ani analysis sathi prepare karto.
+Q6. What is the use of df.columns?
+English Answer:
+The df.columns attribute returns all column names present in a DataFrame.
+
+Marathi + English Mix:
+df.columns attribute DataFrame madhil sarva column names return karto.
+Q7. What is the use of str.strip()?
+English Answer:
+The str.strip() function removes extra spaces from the beginning and end of strings.
+
+Marathi + English Mix:
+str.strip() function string chya starting ani ending madhil extra spaces remove karto.
+Q8. What is the use of str.lower()?
+English Answer:
+The str.lower() function converts all string characters into lowercase letters.
+
+Marathi + English Mix:
+str.lower() function sarva string characters lowercase letters madhe convert karto.
+Q9. What is the use of str.replace()?
+English Answer:
+The str.replace() function replaces a particular character or pattern with another character or pattern.
+
+Marathi + English Mix:
+str.replace() function particular character kiwa pattern la dusrya character kiwa pattern ne replace karto.
+Q10. What is Regular Expression (Regex)?
+English Answer:
+Regex stands for Regular Expression. It is used to search, match, and replace specific patterns in text.
+
+Marathi + English Mix:
+Regex cha full form Regular Expression aahe. Text madhil specific patterns search, match ani replace karnyasathi use hoto.
+Q11. What is the use of regex=True?
+English Answer:
+regex=True tells Pandas to treat the given pattern as a regular expression.
+
+Marathi + English Mix:
+regex=True mule Pandas dilelya pattern la Regular Expression mhanun treat karto.
+Q12. What is the use of select_dtypes()?
+English Answer:
+The select_dtypes() function selects columns based on their data types, such as numerical and categorical columns.
+
+Marathi + English Mix:
+select_dtypes() function data type nusar columns select karto, jase numerical ani categorical columns.
+Q13. What is the difference between Numerical and Categorical Data?
+English Answer:
+- Numerical data contains numbers, such as price and area.
+- Categorical data contains categories, such as location and house type.
+Marathi + English Mix:
+- Numerical data mhanje numbers madhil data, jase price ani area.
+- Categorical data mhanje categories madhil data, jase location ani house type.
+Q14. What is Imputation?
+English Answer:
+Imputation is the process of replacing missing values with suitable values such as mean, median, or mode.
+
+Marathi + English Mix:
+Imputation mhanje missing values la suitable values ne replace karne, jase mean, median kiwa mode.
+Q15. Why do we use Median for numerical missing values?
+English Answer:
+Median is used because it is less affected by extreme values and outliers compared to mean.
+
+Marathi + English Mix:
+Numerical missing values fill karnyasathi median use karto karan mean peksha median var outliers cha kami effect hoto.
+Q16. What is Mode?
+English Answer:
+Mode is the value that appears most frequently in a dataset.
+
+Marathi + English Mix:
+Mode mhanje dataset madhye sarvat jast vela repeat honari value.
+Q17. What is Data Filtering?
+English Answer:
+Data Filtering is the process of selecting specific records from a dataset based on given conditions.
+
+Marathi + English Mix:
+Data Filtering mhanje given condition nusar dataset madhun specific records select karne.
+Q18. What is the use of groupby()?
+English Answer:
+The groupby() function groups data based on a particular column and performs calculations on each group.
+
+Marathi + English Mix:
+groupby() function particular column nusar data groups madhe divide karto ani pratyek group var calculations perform karto.
+Q19. What is the use of mean()?
+English Answer:
+The mean() function calculates the average of numerical values.
+
+Marathi + English Mix:
+mean() function numerical values chi average calculate karto.
+Q20. What are Outliers?
+English Answer:
+Outliers are unusually high or low values that are significantly different from other values in a dataset.
+
+Marathi + English Mix:
+Outliers mhanje dataset madhil asha values jya baki values peksha khup jast kiwa kami astat.
+Q21. What is IQR?
+English Answer:
+IQR stands for Interquartile Range. It is the difference between the third quartile (Q3) and first quartile (Q1).
+
+Marathi + English Mix:
+IQR cha full form Interquartile Range aahe. Q3 ani Q1 madhil difference la IQR mhantat.
+Q22. What are Q1, Q2, and Q3?
+English Answer:
+- Q1 represents the 25th percentile.
+- Q2 represents the 50th percentile or median.
+- Q3 represents the 75th percentile.
+Marathi + English Mix:
+- Q1 mhanje 25th percentile.
+- Q2 mhanje 50th percentile kiwa median.
+- Q3 mhanje 75th percentile.
+Q23. How do you calculate Lower Limit and Upper Limit for outliers?
+English Answer:
+Lower Limit = Q1 − 1.5 × IQR.
+
+Upper Limit = Q3 + 1.5 × IQR.
+
+Values outside these limits are considered potential outliers.
+
+Marathi + English Mix:
+Lower Limit calculate karnyasathi Q1 madhun 1.5 × IQR subtract karto. Upper Limit sathi Q3 madhe 1.5 × IQR add karto. Ya limits chya baheril values potential outliers astat.
+Q24. What is the difference between Outlier Detection and Outlier Removal?
+English Answer:
+- Outlier Detection identifies unusual values.
+- Outlier Removal removes those unusual values from the dataset.
+Marathi + English Mix:
+- Outlier Detection mhanje unusual values identify karne.
+- Outlier Removal mhanje identify kelelya unusual values dataset madhun remove karne.
+Q25. What is the use of len() function?
+English Answer:
+The len() function returns the total number of elements or records in a dataset.
+
+Marathi + English Mix:
+len() function dataset madhil total records kiwa elements chi sankhya return karto.
+Q26. What is One-Hot Encoding?
+English Answer:
+One-Hot Encoding converts categorical data into separate binary columns containing 0 and 1.
+
+Marathi + English Mix:
+One-Hot Encoding categorical data la separate binary columns madhe convert karto. Ya columns madhye 0 ani 1 values astat.
+Q27. What is the use of pd.get_dummies()?
+English Answer:
+The pd.get_dummies() function converts categorical columns into numerical dummy variables using One-Hot Encoding.
+
+Marathi + English Mix:
+pd.get_dummies() function One-Hot Encoding use karun categorical columns la numerical dummy variables madhe convert karto.
+Q28. What is the use of drop_first=True?
+English Answer:
+drop_first=True removes the first dummy column to avoid redundant information and reduce multicollinearity.
+
+Marathi + English Mix:
+drop_first=True mule first dummy column remove hoto. Yane redundant information ani multicollinearity kami karnyas madat hote.
+Q29. What is the difference between Label Encoding and One-Hot Encoding?
+English Answer:
+Label Encoding	One-Hot Encoding
+Converts categories into numerical labels.	Creates separate binary columns.
+Uses numbers like 0, 1, 2.	Uses values like 0 and 1.
+Usually creates one column.	May create multiple columns.
+
+Marathi + English Mix:
+- Label Encoding madhye categories la 0, 1, 2 sarkhe numerical labels detat.
+- One-Hot Encoding madhye pratyek category sathi separate binary column create karto.
+Q30. What is the final output of this practical?
+English Answer:
+The final output is a cleaned and encoded real estate dataset saved as RealEstate_Prices_Final.csv.
+
+Marathi + English Mix:
+Ya practical cha final output mhanje cleaned ani encoded real estate dataset, jo RealEstate_Prices_Final.csv ya CSV file madhe save hoto.
+
+
+'''
+
+
+
+
