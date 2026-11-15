@@ -1,6 +1,124 @@
 #7_dmv_dataloading_store_fileformat.
 
+import pandas as pd
+import matplotlib.pyplot as plt
 
+csv_data = pd.read_csv("sales_data.csv")
+excel_data = pd.read_excel("sales_data.xlsx")
+json_data = pd.read_json("sales_data.json")
+
+print("CSV Data")
+print(csv_data.head())
+
+print("\nExcel Data")
+print(excel_data.head())
+
+print("\nJSON Data")
+print(json_data.head())
+
+print("\nCSV Information")
+csv_data.info()
+
+print("\nExcel Information")
+excel_data.info()
+
+print("\nJSON Information")
+json_data.info()
+
+print("\nMissing Values - CSV")
+print(csv_data.isnull().sum())
+
+print("\nMissing Values - Excel")
+print(excel_data.isnull().sum())
+
+print("\nMissing Values - JSON")
+print(json_data.isnull().sum())
+
+csv_data.drop_duplicates(inplace=True)
+excel_data.drop_duplicates(inplace=True)
+json_data.drop_duplicates(inplace=True)
+
+csv_data.fillna(0, inplace=True)
+excel_data.fillna(0, inplace=True)
+json_data.fillna(0, inplace=True)
+
+sales = pd.concat(
+    [csv_data, excel_data, json_data],
+    ignore_index=True
+)
+
+print("\nMerged Dataset")
+print(sales.head())
+
+sales["Total"] = sales["Quantity"] * sales["Price"]
+
+print("\nSummary Statistics")
+print(sales.describe())
+
+total_sales = sales["Total"].sum()
+print("\nTotal Sales =", total_sales)
+
+average_order = sales["Total"].mean()
+print("Average Order Value =", average_order)
+
+category_sales = sales.groupby("Category")["Total"].sum()
+
+print("\nSales by Category")
+print(category_sales)
+
+category_distribution = sales["Category"].value_counts()
+
+print("\nCategory Distribution")
+print(category_distribution)
+
+plt.figure(figsize=(8, 5))
+category_sales.plot(kind="bar")
+plt.title("Sales by Category")
+plt.xlabel("Category")
+plt.ylabel("Total Sales")
+plt.show()
+
+plt.figure(figsize=(6, 6))
+category_distribution.plot(kind="pie", autopct="%1.1f%%")
+plt.title("Category Distribution")
+plt.ylabel("")
+plt.show()
+
+plt.figure(figsize=(6, 4))
+sales.boxplot(column="Total")
+plt.title("Sales Box Plot")
+plt.ylabel("Total Sales")
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
 # Pandas library import karto, ji data reading, cleaning ani analysis sathi use hote
 import pandas as pd
 
@@ -225,7 +343,7 @@ plt.show()
 
 
 
-'''
+
 Q1. What is Pandas?
 English Answer:
 Pandas is a Python library used for data manipulation, data cleaning, and data analysis.
