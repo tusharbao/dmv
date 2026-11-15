@@ -1,0 +1,452 @@
+#12.data aggregation
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("Superstore.csv", encoding="latin1")
+
+print("First 5 Records:")
+print(df.head())
+
+print("\nDataset Shape:")
+print(df.shape)
+
+print("\nColumn Names:")
+print(df.columns.tolist())
+
+print("\nDataset Information:")
+df.info()
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+
+df.columns = (
+    df.columns
+    .str.strip()
+    .str.lower()
+    .str.replace(" ", "_")
+)
+
+print("\nCleaned Column Names:")
+print(df.columns.tolist())
+
+region_sales = df.groupby("region")["sales"].sum()
+
+print("\nTotal Sales by Region:")
+print(region_sales)
+
+plt.figure(figsize=(8, 5))
+region_sales.plot(kind="bar")
+plt.title("Total Sales by Region")
+plt.xlabel("Region")
+plt.ylabel("Sales")
+plt.xticks(rotation=0)
+plt.show()
+
+plt.figure(figsize=(7, 7))
+region_sales.plot(
+    kind="pie",
+    autopct="%1.1f%%"
+)
+plt.title("Sales Distribution by Region")
+plt.ylabel("")
+plt.show()
+
+top_regions = region_sales.sort_values(
+    ascending=False
+)
+
+print("\nTop Performing Regions:")
+print(top_regions)
+
+region_category_sales = df.groupby(
+    ["region", "category"]
+)["sales"].sum()
+
+print("\nSales by Region and Category:")
+print(region_category_sales)
+
+pivot_data = df.pivot_table(
+    values="sales",
+    index="region",
+    columns="category",
+    aggfunc="sum",
+    fill_value=0
+)
+
+print("\nRegion and Category Sales:")
+print(pivot_data)
+
+pivot_data.plot(
+    kind="bar",
+    figsize=(10, 6)
+)
+plt.title("Sales by Region and Category")
+plt.xlabel("Region")
+plt.ylabel("Sales")
+plt.xticks(rotation=0)
+plt.legend(title="Category")
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# pandas data analysis sathi use hote
+# matplotlib graphs create karnyasathi use hote
+
+df = pd.read_csv("Superstore.csv", encoding="latin1")
+# Superstore.csv file read karun DataFrame madhe store karto
+# latin1 encoding special characters properly read karnyasathi use hote
+
+print("First 5 Records:")
+print(df.head())
+# Dataset madhil first 5 records display karto
+
+print("\nDataset Shape:")
+print(df.shape)
+# Dataset madhil total rows ani columns show karto
+
+print("\nColumn Names:")
+print(df.columns.tolist())
+# Dataset madhil saglya column names chi list show karto
+
+print("\nDataset Information:")
+df.info()
+# Columns, data types ani non-null values chi information deto
+
+print("\nMissing Values:")
+print(df.isnull().sum())
+# Pratyek column madhil missing values count karto
+
+
+# Column Names Cleaning
+df.columns = (
+    df.columns
+    .str.strip()
+    # Column names chya beginning ani ending madhil spaces remove karto
+
+    .str.lower()
+    # Saglya column names lowercase madhe convert karto
+
+    .str.replace(" ", "_")
+    # Column names madhil spaces la underscore ne replace karto
+)
+
+print("\nCleaned Column Names:")
+print(df.columns.tolist())
+# Clean kelele column names display karto
+
+
+# Total Sales by Region
+region_sales = df.groupby("region")["sales"].sum()
+# Region nusar data group karto
+# Pratyek region chi total sales calculate karto
+
+print("\nTotal Sales by Region:")
+print(region_sales)
+# Pratyek region chi total sales display karto
+
+
+# Bar Chart
+plt.figure(figsize=(8, 5))
+# Graph cha size set karto
+
+region_sales.plot(kind="bar")
+# Region-wise sales cha bar chart create karto
+
+plt.title("Total Sales by Region")
+plt.xlabel("Region")
+plt.ylabel("Sales")
+plt.xticks(rotation=0)
+# Region names horizontal display karto
+
+plt.show()
+# Bar chart display karto
+
+
+# Pie Chart
+plt.figure(figsize=(7, 7))
+
+region_sales.plot(
+    kind="pie",
+    autopct="%1.1f%%"
+)
+# Region-wise sales distribution pie chart madhe show karto
+# autopct percentage 1 decimal point paryant show karto
+
+plt.title("Sales Distribution by Region")
+plt.ylabel("")
+# Y-axis label remove karto
+
+plt.show()
+
+
+# Top Performing Regions
+top_regions = region_sales.sort_values(
+    ascending=False
+)
+# Sales descending order madhe sort karto
+# Highest sales wala region first yeto
+
+print("\nTop Performing Regions:")
+print(top_regions)
+# Sorted region sales display karto
+
+
+# Sales by Region and Category
+region_category_sales = df.groupby(
+    ["region", "category"]
+)["sales"].sum()
+# Region ani category ya don columns nusar grouping karto
+# Pratyek region-category combination chi total sales calculate karto
+
+print("\nSales by Region and Category:")
+print(region_category_sales)
+# Region ani category wise sales display karto
+
+
+# Pivot Table
+pivot_data = df.pivot_table(
+    values="sales",
+    # Calculate karaychi value sales aahe
+
+    index="region",
+    # Rows madhe regions show hotil
+
+    columns="category",
+    # Columns madhe categories show hotil
+
+    aggfunc="sum",
+    # Sales chi sum calculate hoil
+
+    fill_value=0
+    # Missing combinations sathi 0 value set karto
+)
+
+print("\nRegion and Category Sales:")
+print(pivot_data)
+# Pivot table display karto
+
+
+# Grouped Bar Chart
+pivot_data.plot(
+    kind="bar",
+    figsize=(10, 6)
+)
+# Pratyek region madhil category-wise sales compare karto
+
+plt.title("Sales by Region and Category")
+plt.xlabel("Region")
+plt.ylabel("Sales")
+plt.xticks(rotation=0)
+plt.legend(title="Category")
+# Legend madhe category names display karto
+
+plt.show()
+# Final graph display karto
+
+
+
+
+
+
+
+
+
+
+
+Q1. What is the aim of this practical?
+English: The aim is to analyze Superstore sales data and compare sales across different regions and categories.
+
+Marathi-English: Ya practical cha aim Superstore sales data analyze karne ani different regions ani categories madhil sales compare karne aahe.
+Q2. What is Superstore dataset?
+English: Superstore is a sales dataset containing information about orders, products, regions, customers and sales.
+
+Marathi-English: Superstore dataset madhe orders, products, regions, customers ani sales chi information aste.
+Q3. Why do we use pandas?
+English: Pandas is used for reading, cleaning, manipulating and analyzing data.
+
+Marathi-English: Pandas data read, clean, manipulate ani analyze karnyasathi use hote.
+Q4. Why do we use Matplotlib?
+English: Matplotlib is used to create different types of graphs and charts.
+
+Marathi-English: Matplotlib different types che graphs ani charts create karnyasathi use hote.
+Q5. What is encoding="latin1"?
+English: Latin1 is a character encoding used to read special characters from a file.
+
+Marathi-English: Latin1 encoding special characters properly read karnyasathi use hote.
+Q6. What is df.head()?
+English: It displays the first five rows of the dataset by default.
+
+Marathi-English: df.head() default ne dataset chya first five rows display karto.
+Q7. What is df.shape?
+English: It returns the total number of rows and columns.
+
+Marathi-English: df.shape dataset madhil total rows ani columns show karto.
+Q8. What is df.info()?
+English: It displays column names, data types and non-null values.
+
+Marathi-English: df.info() column names, data types ani non-null values chi information deto.
+Q9. What are missing values?
+English: Missing values are empty or unavailable values in a dataset.
+
+Marathi-English: Dataset madhe jithe data available nasto tyala missing value mhantat.
+Q10. What is isnull().sum()?
+English: It counts missing values in each column.
+
+Marathi-English: isnull().sum() pratyek column madhil missing values count karto.
+Q11. Why do we clean column names?
+English: We clean column names to make them consistent and easier to access in Python.
+
+Marathi-English: Column names clean kelyamule te consistent hotat ani Python madhe access karne easy hote.
+Q12. What is str.strip()?
+English: It removes extra spaces from the beginning and end of strings.
+
+Marathi-English: str.strip() string chya starting ani ending madhil extra spaces remove karto.
+Q13. What is str.lower()?
+English: It converts all characters into lowercase.
+
+Marathi-English: str.lower() sagle characters lowercase madhe convert karto.
+Q14. What is str.replace()?
+English: It replaces a specified character or text with another value.
+
+Marathi-English: str.replace() specified character kiwa text dusrya value ne replace karto.
+Q15. What is groupby()?
+English: Groupby is used to group data based on one or more columns.
+
+Marathi-English: groupby() ek kiwa adhik columns nusar data groups madhe divide karto.
+Q16. What is the use of sum()?
+English: The sum function calculates the total of numerical values.
+
+Marathi-English: sum() numerical values chi total calculate karto.
+Q17. What is region_sales?
+English: It is a variable that stores the total sales of each region.
+
+Marathi-English: region_sales variable pratyek region chi total sales store karto.
+Q18. What is a bar chart?
+English: A bar chart represents data using rectangular bars to compare different categories.
+
+Marathi-English: Bar chart rectangular bars cha use karun different categories madhil data compare karto.
+Q19. What is a pie chart?
+English: A pie chart represents data as slices of a circle to show percentages or proportions.
+
+Marathi-English: Pie chart circular slices cha use karun data chi percentage kiwa proportion show karto.
+Q20. What is autopct="%1.1f%%"?
+English: It displays percentages on the pie chart with one digit after the decimal point.
+
+Marathi-English: Ha parameter pie chart var percentage one decimal point paryant show karto.
+Q21. What is sort_values()?
+English: It sorts data according to values in ascending or descending order.
+
+Marathi-English: sort_values() values ascending kiwa descending order madhe arrange karto.
+Q22. What is ascending=False?
+English: It sorts values in descending order, from highest to lowest.
+
+Marathi-English: ascending=False values highest to lowest order madhe arrange karto.
+Q23. What is multi-column grouping?
+English: It means grouping data using more than one column.
+
+Marathi-English: Ekapeksha jast columns use karun data group karne mhanje multi-column grouping.
+Q24. What is a pivot table?
+English: A pivot table summarizes and organizes data based on rows, columns and aggregate functions.
+
+Marathi-English: Pivot table rows, columns ani aggregate functions cha use karun data summarize ani organize karto.
+Q25. What is aggfunc="sum"?
+English: It tells the pivot table to calculate the sum of values.
+
+Marathi-English: aggfunc="sum" pivot table la values chi total calculate karayla sangto.
+Q26. What is fill_value=0?
+English: It replaces missing values in the pivot table with zero.
+
+Marathi-English: Pivot table madhil missing values la zero ne replace karto.
+Q27. What is the difference between groupby and pivot table?
+English:
+- Groupby groups data and performs calculations.
+- Pivot table summarizes data in a row-and-column format.
+Marathi-English:
+- Groupby data groups madhe divide karun calculations karto.
+- Pivot table data rows ani columns format madhe summarize karto.
+Q28. What is plt.legend()?
+English: It displays labels to identify different data series in a graph.
+
+Marathi-English: plt.legend() graph madhil different categories identify karnyasathi labels show karto.
+Q29. What is figsize=(10,6)?
+English: It sets the graph width to 10 inches and height to 6 inches.
+
+Marathi-English: Graph chi width 10 inches ani height 6 inches set karto.
+Q30. Why do we use plt.show()?
+English: It displays the generated graph on the screen.
+
+Marathi-English: plt.show() create kelela graph screen var display karto.
+
+4. Important extra viva questions (Tricky)
+Q31. What is the difference between bar chart and pie chart?
+English:
+- Bar chart compares values between categories.
+- Pie chart shows the percentage contribution of each category.
+Marathi-English: Bar chart different categories chi values compare karto, tar pie chart total madhil each category cha percentage show karto.
+Q32. What is the difference between count() and sum()?
+English: count() counts non-missing values, while sum() calculates the total of numerical values.
+
+Marathi-English: count() available values count karto, tar sum() numerical values chi total calculate karto.
+Q33. Why do we use pivot_table() instead of a normal table?
+English: A pivot table makes it easier to summarize and compare data across multiple categories.
+
+Marathi-English: Multiple categories nusar data summarize ani compare karne pivot table mule easy hote.
+Q34. What is the difference between ascending and descending order?
+English: Ascending means smallest to largest, while descending means largest to smallest.
+
+Marathi-English: Ascending mhanje smallest to largest ani descending mhanje largest to smallest.
+Q35. How can we identify the best-performing region?
+English: We calculate total sales for each region and sort them in descending order. The region with the highest sales is the best-performing region by sales.
+
+Marathi-English: Pratyek region chi total sales calculate karun descending order madhe sort karto. Jya region chi sales highest aahe to sales nusar best-performing region asto.
+
+5. Important code functions for quick revision
+Function	Use
+pd.read_csv()	Read CSV file
+df.head()	First 5 records
+df.shape	Rows and columns
+df.info()	Dataset information
+df.isnull().sum()	Count missing values
+str.strip()	Remove extra spaces
+str.lower()	Convert to lowercase
+str.replace()	Replace characters
+groupby()	Group data
+sum()	Calculate total
+sort_values()	Sort values
+pivot_table()	Summarize data
+plt.bar()	Bar chart
+plot(kind="pie")	Pie chart
+plt.show()	Display graph
+
+'''
